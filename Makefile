@@ -1,9 +1,10 @@
 .SILENT:
 
-CC				= gcc
+CC				= g++
 
 BIN_DIR         = bin
 SRC_DIR         = src
+INC_DIR         = inc
 
 SOURCES         = $(wildcard $(SRC_DIR)/*.cpp)
 OBJECTS 		= $(subst $(SRC_DIR)/,$(BIN_DIR)/,$(SOURCES:.cpp=.o))
@@ -11,7 +12,7 @@ OBJECTS 		= $(subst $(SRC_DIR)/,$(BIN_DIR)/,$(SOURCES:.cpp=.o))
 SDLINC          = -I$(SDL_PATH)/include
 SDLLIB          = -L$(SDL_PATH)/lib -lSDL3
 
-CFLAGS          = -g -Wall -fdiagnostics-color=always $(SDLINC)
+CFLAGS          = -g -Wall -fdiagnostics-color=always -I$(INC_DIR) $(SDLINC)
 LDFLAGS         = $(SDLLIB) -mwindows
 
 TARGET			= build/mrmoomoo.scr

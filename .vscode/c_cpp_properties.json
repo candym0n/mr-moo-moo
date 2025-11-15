@@ -3,7 +3,7 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/**",
+                "${workspaceFolder}/inc",
                 "${SDL_PATH}/include"
             ],
             "defines": [
