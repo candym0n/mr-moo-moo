@@ -3,23 +3,37 @@
 
 #define WIN32_LEAN_AND_MEAN
 
-#include <SDL3/SDL.h>
 #include <windows.h>
+#include <SDL3/SDL.h>
+
+#include <Cow.h>
 
 class ScreenSaver {
 public:
-    ScreenSaver(HWND hwnd); // Creates full screen window OR uses existing window
+    // Non-copyable, non-movable
+    ScreenSaver(const ScreenSaver&) = delete;
+    ScreenSaver& operator=(const ScreenSaver&) = delete;
 
-    SDL_AppResult HandleEvent(SDL_Event* event);
+    explicit ScreenSaver(HWND hwnd);
+    ~ScreenSaver();
+
+    SDL_AppResult HandleEvent(const SDL_Event* event);
     SDL_AppResult UpdateFrame();
 
-private:
-    SDL_Window* m_Window;
-    SDL_Renderer* m_Renderer;
+    bool IsValid() const noexcept { return m_Valid; }
 
-    int m_Width, m_Height;
+private:
+    Cow* m_Cow;
+
+    uint64_t m_LastTime;
+
+    bool m_Valid = false;
+    SDL_Window* m_Window = nullptr;
+    SDL_Renderer* m_Renderer = nullptr;
+    int m_Width = 0, m_Height = 0;
 
     int CreateWindowAndRenderer(HWND hwnd);
+    void Cleanup() noexcept;
 };
 
 #endif // __SCREEN_SAVER_H__

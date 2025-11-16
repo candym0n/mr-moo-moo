@@ -4,7 +4,8 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/inc",
-                "${SDL_PATH}/include"
+                "${SDL_PATH}/base/include",
+                "${SDL_PATH}/image/include"
             ],
             "defines": [
                 "_DEBUG",
@@ -15,7 +16,7 @@
             "cStandard": "c17",
             "cppStandard": "c++17",
             "intelliSenseMode": "gcc-x64",
-            "compilerPath": "D:/programs/TDM-GCC/bin/g++.exe"
+            "compilerPath": "C:/msys64/mingw64/bin/g++.exe"
         }
     ],
     "version": 4
