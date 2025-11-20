@@ -1,14 +1,26 @@
-#include "ScreenSaver.h"
+#include <ScreenSaver.h>
+
+
+
+// Not the sky background, only for overshoots
+#define OVERSHOOT_BG_R 135
+#define OVERSHOOT_BG_G 206
+#define OVERSHOOT_BG_B 235
 
 ScreenSaver::ScreenSaver(HWND hwnd) : 
     m_LastTime(SDL_GetPerformanceCounter())
 {
     m_Valid = (CreateWindowAndRenderer(hwnd) == 0);
 
+    SDL_SetRenderLogicalPresentation(m_Renderer, LOGICAL_WIDTH, LOGICAL_HEIGHT, SDL_LOGICAL_PRESENTATION_LETTERBOX);
+
     if (!m_Valid)
         return;
+    
+    m_Scene = new ScenePlayer();
+    m_Config = new Config(CONFIG_PATH, m_Renderer);
 
-    m_Cow = new Cow(m_Renderer);
+    m_Scene->SetBackgroundTexture(m_Config->getBackgroundTexture());
 }
 
 ScreenSaver::~ScreenSaver() {
@@ -77,14 +89,14 @@ SDL_AppResult ScreenSaver::UpdateFrame() {
     uint64_t currentTime = SDL_GetPerformanceCounter();
     double deltaTime = static_cast<double>(currentTime - m_LastTime) / SDL_GetPerformanceFrequency();
     m_LastTime = currentTime;
- 
-    // Update everything
-    m_Cow->Update(deltaTime);
 
-    // Draw everything
-    SDL_SetRenderDrawColor(m_Renderer, 0, 0, 0, 255);
+    // Update the scene
+    m_Scene->Update(deltaTime);
+
+    // Draw the scene
+    SDL_SetRenderDrawColor(m_Renderer, OVERSHOOT_BG_R, OVERSHOOT_BG_G, OVERSHOOT_BG_B, 255);
     SDL_RenderClear(m_Renderer);
-    m_Cow->Render(m_Renderer);
+    m_Scene->Draw(m_Renderer);
     SDL_RenderPresent(m_Renderer);
     return SDL_APP_CONTINUE;
 }

@@ -3,6 +3,8 @@
 
 #include <SDL3/SDL.h>
 
+#include <Camera.h>
+
 /**
  * @brief Handles frame-based animation from a sprite sheet.
  *
@@ -11,7 +13,7 @@
 class Animation
 {
 public:
-    Animation(SDL_Texture* texture, float frameWidth, float frameHeight, float frameDuration, int start = 0, int end = 0);
+    Animation();
 
     void SetTexture(SDL_Texture* texture, float frameWidth, float frameHeight, float frameDuration, int start = 0, int end = 0);
 
@@ -19,7 +21,7 @@ public:
     void Pause();
 
     void Update(double dt);
-    void Render(SDL_Renderer* renderer, int x, int y, int w, int) const;
+    void Render(SDL_Renderer* renderer, Camera* camera,int x, int y, int w, int h) const;
 
     bool IsPlaying() const { return m_Playing; }
     int GetFrame() const { return m_CurrentFrame; }

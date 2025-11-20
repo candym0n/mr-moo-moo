@@ -1,12 +1,11 @@
 #include "Animation.h"
 #include <cassert>
 
-Animation::Animation(SDL_Texture* texture, float frameWidth, float frameHeight, float frameDuration, int start, int end)
+Animation::Animation()
     : m_Texture(nullptr), m_FrameWidth(0), m_FrameHeight(0), m_Columns(0), m_Rows(0),
       m_FrameDuration(0), m_StartFrame(0), m_EndFrame(0), m_CurrentFrame(0),
       m_ElapsedTime(0.0f), m_Playing(false)
 {
-    SetTexture(texture, frameWidth, frameHeight, frameDuration, start, end);
 }
 
 void Animation::SetTexture(SDL_Texture* texture, float frameWidth, float frameHeight, float frameDuration, int start, int end)
@@ -56,7 +55,7 @@ void Animation::Update(double dt)
     }
 }
 
-void Animation::Render(SDL_Renderer* renderer, int x, int y, int w, int h) const
+void Animation::Render(SDL_Renderer* renderer, Camera* camera, int x, int y, int w, int h) const
 {
     if (!m_Texture) return;
     int col = m_CurrentFrame % m_Columns;
@@ -70,7 +69,7 @@ void Animation::Render(SDL_Renderer* renderer, int x, int y, int w, int h) const
     };
 
     SDL_FRect dstRect = {
-        static_cast<float>(x),
+        static_cast<float>(x - camera->getX()),
         static_cast<float>(y),
         static_cast<float>(w),
         static_cast<float>(h)

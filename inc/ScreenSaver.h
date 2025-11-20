@@ -6,7 +6,10 @@
 #include <windows.h>
 #include <SDL3/SDL.h>
 
-#include <Cow.h>
+#include <Config.h>
+#include <ScenePlayer.h>
+
+#define CONFIG_PATH "C:/Users/Jayden/AppData/Local/MrMooMoo/config.xml"
 
 class ScreenSaver {
 public:
@@ -23,14 +26,15 @@ public:
     bool IsValid() const noexcept { return m_Valid; }
 
 private:
-    Cow* m_Cow;
-
     uint64_t m_LastTime;
 
     bool m_Valid = false;
     SDL_Window* m_Window = nullptr;
     SDL_Renderer* m_Renderer = nullptr;
     int m_Width = 0, m_Height = 0;
+
+    ScenePlayer* m_Scene;
+    Config* m_Config;
 
     int CreateWindowAndRenderer(HWND hwnd);
     void Cleanup() noexcept;
