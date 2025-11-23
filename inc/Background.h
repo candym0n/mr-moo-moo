@@ -1,5 +1,7 @@
-#ifndef __BACKGROUND_H__
-#define __BACKGROUND_H__
+#ifndef BACKGROUND_H
+#define BACKGROUND_H
+
+#include <memory>
 
 #include <SDL3/SDL.h>
 
@@ -10,13 +12,13 @@ public:
     Background();
 
     // Set the background texture. Does not take ownership of the texture.
-    void SetTexture(SDL_Texture* texture);
+    void SetTexture(std::shared_ptr<SDL_Texture> texture);
 
     // Draws the background texture to the renderer.
-    void Draw(SDL_Renderer* renderer, Camera* camera) const;
+    void Draw(std::shared_ptr<SDL_Renderer> renderer, std::shared_ptr<Camera> camera) const;
 
 private:
-    SDL_Texture* m_Texture;
+    std::shared_ptr<SDL_Texture> m_Texture;
 };
 
-#endif // __BACKGROUND_H__
+#endif // BACKGROUND_H

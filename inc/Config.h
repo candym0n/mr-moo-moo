@@ -1,5 +1,5 @@
-#ifndef __CONFIG_H__
-#define __CONFIG_H__
+#ifndef CONFIG_H
+#define CONFIG_H
 
 #include <string>
 
@@ -13,25 +13,23 @@ class Config
 {
 public:
     /// Construct Config from XML file path.
-    Config(const std::string& xmlPath, SDL_Renderer* renderer);
+    Config(const std::string& xmlPath, std::shared_ptr<SDL_Renderer> renderer);
 
     /// Noncopyable, but movable for resource safety.
     Config(const Config&) = delete;
     Config& operator=(const Config&) = delete;
-    Config(Config&&) noexcept;
-    Config& operator=(Config&&) noexcept;
 
     /// Destructor cleans up texture.
     ~Config();
 
     /// Get SDL_Texture for background.
-    SDL_Texture* getBackgroundTexture() const;
+    std::shared_ptr<SDL_Texture> getBackgroundTexture() const;
 
 private:
-    SDL_Texture* m_BackgroundTexture;
+    std::shared_ptr<SDL_Texture> m_BackgroundTexture;
 
     /// XML parsing helper routines.
-    void loadFromXML(const std::string& xmlPath, SDL_Renderer* renderer);
+    void loadFromXML(const std::string& xmlPath, std::shared_ptr<SDL_Renderer> renderer);
 };
 
-#endif // __CONFIG_H__
+#endif // CONFIG_H

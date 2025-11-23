@@ -39,4 +39,5 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 void SDL_AppQuit(void *appstate, SDL_AppResult result)
 {
     /* SDL will clean up the window/renderer for us. Thank you, SDL.*/
+    delete static_cast<ScreenSaver*>(appstate);
 }

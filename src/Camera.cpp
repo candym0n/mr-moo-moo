@@ -5,7 +5,7 @@ Camera::Camera(float x)
 
 void Camera::setX(float newX) {
     if (newX < -LOGICAL_WIDTH) newX = -LOGICAL_WIDTH;
-    if (newX > LOGICAL_WIDTH * 2) newX = LOGICAL_WIDTH * 2;
+    if (newX > LOGICAL_WIDTH) newX = LOGICAL_WIDTH;
     x = newX;
 }
 

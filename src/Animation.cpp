@@ -8,12 +8,12 @@ Animation::Animation()
 {
 }
 
-void Animation::SetTexture(SDL_Texture* texture, float frameWidth, float frameHeight, float frameDuration, int start, int end)
+void Animation::SetTexture(std::shared_ptr<SDL_Texture> texture, float frameWidth, float frameHeight, float frameDuration, int start, int end)
 {
     assert(texture && "Texture must not be null");
  
     float textureWidth, textureHeight;
-    SDL_GetTextureSize(texture, &textureWidth, &textureHeight);
+    SDL_GetTextureSize(texture.get(), &textureWidth, &textureHeight);
  
     m_Texture = texture;
     m_FrameWidth = frameWidth;
@@ -24,7 +24,7 @@ void Animation::SetTexture(SDL_Texture* texture, float frameWidth, float frameHe
     m_Rows = static_cast<int>(textureHeight / frameHeight);
 
     m_StartFrame = start;
-    m_EndFrame = end > start ? end : m_Columns * m_Rows - 1;
+    m_EndFrame = end >= start ? end : m_Columns * m_Rows - 1;
     m_CurrentFrame = start;
     m_ElapsedTime = 0.0f;
     m_Playing = false;
@@ -55,7 +55,7 @@ void Animation::Update(double dt)
     }
 }
 
-void Animation::Render(SDL_Renderer* renderer, Camera* camera, int x, int y, int w, int h) const
+void Animation::Draw(std::shared_ptr<SDL_Renderer> renderer, std::shared_ptr<Camera> camera, int x, int y, int w, int h) const
 {
     if (!m_Texture) return;
     int col = m_CurrentFrame % m_Columns;
@@ -75,5 +75,5 @@ void Animation::Render(SDL_Renderer* renderer, Camera* camera, int x, int y, int
         static_cast<float>(h)
     };
 
-    SDL_RenderTexture(renderer, m_Texture, &srcRect, &dstRect);
+    SDL_RenderTexture(renderer.get(), m_Texture.get(), &srcRect, &dstRect);
 }

@@ -1,17 +1,27 @@
-#ifndef __ASSET_HELPER_H__
-#define __ASSET_HELPER_H__
+#ifndef ASSET_HELPER_H
+#define ASSET_HELPER_H
 
 #include <string>
-
+#include <unordered_map>
+#include <memory>
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
 
-const std::string ASSET_DIR_PATH = "C:/Users/Jayden/AppData/Local/MrMooMoo/";
-
 class AssetHelper {
 public:
-    static std::string GetAssetPath(std::string path);
-    static SDL_Texture* LoadTexture(SDL_Renderer* renderer, std::string path);
+
+    // Loads a texture from an asset path (returns a shared pointer for safe ownership)
+    static std::shared_ptr<SDL_Texture> LoadTexture(std::shared_ptr<SDL_Renderer> renderer, const std::string& path);
+
+    // Clears all cached textures (releases memory)
+    static void Clear();
+
+private:
+    static std::unordered_map<std::string, std::shared_ptr<SDL_Texture>> m_ImageCache;
+    static std::string AssetDirPath();
+    
+    // Retrieves the full asset path
+    static std::string GetAssetPath(const std::string& path);
 };
 
-#endif // __ASSET_HELPER_H__
+#endif // ASSET_HELPER_H

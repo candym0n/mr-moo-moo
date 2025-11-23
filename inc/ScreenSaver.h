@@ -1,7 +1,9 @@
-#ifndef __SCREEN_SAVER_H__
-#define __SCREEN_SAVER_H__
+#ifndef SCREEN_SAVER_H
+#define SCREEN_SAVER_H
 
 #define WIN32_LEAN_AND_MEAN
+
+#include <memory>
 
 #include <windows.h>
 #include <SDL3/SDL.h>
@@ -12,6 +14,9 @@
 #define CONFIG_PATH "C:/Users/Jayden/AppData/Local/MrMooMoo/config.xml"
 
 class ScreenSaver {
+    using SDLWindowPtr = std::unique_ptr<SDL_Window, void(*)(SDL_Window*)>;
+    using SDLRendererPtr = std::unique_ptr<SDL_Renderer, void(*)(SDL_Renderer*)>;
+
 public:
     // Non-copyable, non-movable
     ScreenSaver(const ScreenSaver&) = delete;
@@ -29,15 +34,15 @@ private:
     uint64_t m_LastTime;
 
     bool m_Valid = false;
-    SDL_Window* m_Window = nullptr;
-    SDL_Renderer* m_Renderer = nullptr;
+    SDLWindowPtr m_Window ;
+    std::shared_ptr<SDL_Renderer> m_Renderer;
     int m_Width = 0, m_Height = 0;
 
-    ScenePlayer* m_Scene;
-    Config* m_Config;
+    std::unique_ptr<ScenePlayer> m_Scene;
+    std::unique_ptr<Config> m_Config;
+    //SDLRendererPtr m_Renderer;
 
     int CreateWindowAndRenderer(HWND hwnd);
-    void Cleanup() noexcept;
 };
 
-#endif // __SCREEN_SAVER_H__
+#endif // SCREEN_SAVER_H

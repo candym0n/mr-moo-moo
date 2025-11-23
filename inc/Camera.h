@@ -1,5 +1,5 @@
-#ifndef __CAMERA_H__
-#define __CAMERA_H__
+#ifndef CAMERA_H
+#define CAMERA_H
 
 #include <SDL3/SDL.h>
 
@@ -20,4 +20,4 @@ private:
     float x;
 };
 
-#endif // __CAMERA_H__
+#endif // CAMERA_H

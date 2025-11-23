@@ -24,13 +24,13 @@ distribution.
 #ifndef TINYXML2_INCLUDED
 #define TINYXML2_INCLUDED
 
-#if defined(ANDROID_NDK) || defined(__BORLANDC__) || defined(__QNXNTO__)
+#if defined(ANDROID_NDK) || defined(BORLANDC) || defined(QNXNTO)
 #   include <ctype.h>
 #   include <limits.h>
 #   include <stdio.h>
 #   include <stdlib.h>
 #   include <string.h>
-#	if defined(__PS3__)
+#	if defined(PS3)
 #		include <stddef.h>
 #	endif
 #else
@@ -50,7 +50,7 @@ distribution.
         AStyle.exe --style=1tbs --indent-switches --break-closing-brackets --indent-preprocessor tinyxml2.cpp tinyxml2.h
 */
 
-#if defined( _DEBUG ) || defined (__DEBUG__)
+#if defined( _DEBUG ) || defined (DEBUG)
 #   ifndef TINYXML2_DEBUG
 #       define TINYXML2_DEBUG
 #   endif
@@ -63,14 +63,14 @@ distribution.
 
 #ifdef _MSC_VER
 #   ifdef TINYXML2_EXPORT
-#       define TINYXML2_LIB __declspec(dllexport)
+#       define TINYXML2_LIB declspec(dllexport)
 #   elif defined(TINYXML2_IMPORT)
-#       define TINYXML2_LIB __declspec(dllimport)
+#       define TINYXML2_LIB declspec(dllimport)
 #   else
 #       define TINYXML2_LIB
 #   endif
-#elif __GNUC__ >= 4
-#   define TINYXML2_LIB __attribute__((visibility("default")))
+#elif GNUC >= 4
+#   define TINYXML2_LIB attribute((visibility("default")))
 #else
 #   define TINYXML2_LIB
 #endif
@@ -80,10 +80,10 @@ distribution.
 #if defined(TINYXML2_DEBUG)
 #   if defined(_MSC_VER)
 #       // "(void)0," is for suppressing C4127 warning in "assert(false)", "assert(true)" and the like
-#       define TIXMLASSERT( x )           do { if ( !((void)0,(x))) { __debugbreak(); } } while(false)
+#       define TIXMLASSERT( x )           do { if ( !((void)0,(x))) { debugbreak(); } } while(false)
 #   elif defined (ANDROID_NDK)
 #       include <android/log.h>
-#       define TIXMLASSERT( x )           do { if ( !(x)) { __android_log_assert( "assert", "grinliz", "ASSERT in '%s' at %d.", __FILE__, __LINE__ ); } } while(false)
+#       define TIXMLASSERT( x )           do { if ( !(x)) { android_log_assert( "assert", "grinliz", "ASSERT in '%s' at %d.", FILE, LINE ); } } while(false)
 #   else
 #       include <assert.h>
 #       define TIXMLASSERT                assert

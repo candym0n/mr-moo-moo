@@ -3,17 +3,17 @@
 Background::Background()
     : m_Texture(nullptr) {}
 
-void Background::SetTexture(SDL_Texture* texture) {
+void Background::SetTexture(std::shared_ptr<SDL_Texture> texture) {
     m_Texture = texture;
 }
 
-void Background::Draw(SDL_Renderer* renderer, Camera* camera) const
+void Background::Draw(std::shared_ptr<SDL_Renderer> renderer, std::shared_ptr<Camera> camera) const
 {
     if (!m_Texture) return;
 
     float width, height;
 
-    SDL_GetTextureSize(m_Texture, &width, &height);
+    SDL_GetTextureSize(m_Texture.get(), &width, &height);
 
     SDL_FRect dstRect = {
         static_cast<float>(-LOGICAL_WIDTH - camera->getX()),
@@ -22,5 +22,5 @@ void Background::Draw(SDL_Renderer* renderer, Camera* camera) const
         height
     };
 
-    SDL_RenderTexture(renderer, m_Texture, nullptr, &dstRect);
+    SDL_RenderTexture(renderer.get(), m_Texture.get(), nullptr, &dstRect);
 }

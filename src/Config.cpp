@@ -1,6 +1,6 @@
 #include <Config.h>
 
-Config::Config(const std::string &xmlPath, SDL_Renderer* renderer) :
+Config::Config(const std::string &xmlPath, std::shared_ptr<SDL_Renderer> renderer) :
     m_BackgroundTexture(nullptr)
 {
     loadFromXML(xmlPath, renderer);
@@ -8,18 +8,15 @@ Config::Config(const std::string &xmlPath, SDL_Renderer* renderer) :
 
 Config::~Config()
 {
-    if (m_BackgroundTexture) {
-        SDL_DestroyTexture(m_BackgroundTexture);
-        m_BackgroundTexture = nullptr;
-    }
+    // SDL3 will destroy textures for us. Thank you, SDL.
 }
 
-SDL_Texture *Config::getBackgroundTexture() const
+std::shared_ptr<SDL_Texture> Config::getBackgroundTexture() const
 {
     return m_BackgroundTexture;
 }
 
-void Config::loadFromXML(const std::string& xmlPath, SDL_Renderer* renderer)
+void Config::loadFromXML(const std::string& xmlPath, std::shared_ptr<SDL_Renderer> renderer)
 {
     tinyxml2::XMLDocument doc;
     if (doc.LoadFile(xmlPath.c_str()) != tinyxml2::XML_SUCCESS)

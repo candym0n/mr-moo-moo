@@ -3,40 +3,31 @@
 
 
 // Not the sky background, only for overshoots
-#define OVERSHOOT_BG_R 135
-#define OVERSHOOT_BG_G 206
-#define OVERSHOOT_BG_B 235
+#define OVERSHOOT_BG_R 123
+#define OVERSHOOT_BG_G 220
+#define OVERSHOOT_BG_B 252
 
 ScreenSaver::ScreenSaver(HWND hwnd) : 
-    m_LastTime(SDL_GetPerformanceCounter())
+    m_LastTime(SDL_GetPerformanceCounter()),
+    m_Window(nullptr, [](SDL_Window* win){ if(win) SDL_DestroyWindow(win); })
 {
     m_Valid = (CreateWindowAndRenderer(hwnd) == 0);
-
-    SDL_SetRenderLogicalPresentation(m_Renderer, LOGICAL_WIDTH, LOGICAL_HEIGHT, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 
     if (!m_Valid)
         return;
     
-    m_Scene = new ScenePlayer();
-    m_Config = new Config(CONFIG_PATH, m_Renderer);
+    SDL_SetRenderLogicalPresentation(m_Renderer.get(), LOGICAL_WIDTH, LOGICAL_HEIGHT, SDL_LOGICAL_PRESENTATION_LETTERBOX);
+
+    m_Scene = std::make_unique<ScenePlayer>();
+    m_Config = std::make_unique<Config>(CONFIG_PATH, m_Renderer);
 
     m_Scene->SetBackgroundTexture(m_Config->getBackgroundTexture());
+
+    // HA HA
+    m_Scene->CheatInit(m_Renderer);
 }
 
 ScreenSaver::~ScreenSaver() {
-    Cleanup();
-}
-
-void ScreenSaver::Cleanup() noexcept {
-    if (m_Renderer) {
-        SDL_DestroyRenderer(m_Renderer);
-        m_Renderer = nullptr;
-    }
-
-    if (m_Window) {
-        SDL_DestroyWindow(m_Window);
-        m_Window = nullptr;
-    }
 }
 
 int ScreenSaver::CreateWindowAndRenderer(HWND hwnd) {
@@ -47,27 +38,44 @@ int ScreenSaver::CreateWindowAndRenderer(HWND hwnd) {
 
     SDL_SetAppMetadata("Mr. Moo Moo", "1.0", "com.mr.moomoo");
 
+    // The custom deleter implementation
+    auto windowDeleter = [](SDL_Window* win) { if (win) SDL_DestroyWindow(win); };
+
+    // When assigning, use std::move:
     if (!hwnd) {
-        m_Window = SDL_CreateWindow("Screen Saver", 0, 0, SDL_WINDOW_FULLSCREEN);
+        auto tempWindow = SDLWindowPtr(
+            SDL_CreateWindow("Screen Saver", 0, 0, SDL_WINDOW_FULLSCREEN),
+            windowDeleter
+        );
+        m_Window = std::move(tempWindow);
     } else {
         SDL_PropertiesID props = SDL_CreateProperties();
         SDL_SetPointerProperty(props, SDL_PROP_WINDOW_CREATE_WIN32_HWND_POINTER, hwnd);
-        m_Window = SDL_CreateWindowWithProperties(props);
+        auto tempWindow = SDLWindowPtr(
+            SDL_CreateWindowWithProperties(props),
+            windowDeleter
+        );
+        m_Window = std::move(tempWindow);
         SDL_DestroyProperties(props);
     }
+
+
 
     if (!m_Window) {
         SDL_Log("SDL_CreateWindow failed: %s", SDL_GetError());
         return 1;
     }
 
-    m_Renderer = SDL_CreateRenderer(m_Window, nullptr);
+    m_Renderer = SDLRendererPtr(
+        SDL_CreateRenderer(m_Window.get(), nullptr),
+        SDL_DestroyRenderer
+    );
     if (!m_Renderer) {
         SDL_Log("SDL_CreateRenderer failed: %s", SDL_GetError());
         return 1;
     }
 
-    SDL_GetWindowSize(m_Window, &m_Width, &m_Height);
+    SDL_GetWindowSize(m_Window.get(), &m_Width, &m_Height);
     return 0;
 }
 
@@ -94,9 +102,9 @@ SDL_AppResult ScreenSaver::UpdateFrame() {
     m_Scene->Update(deltaTime);
 
     // Draw the scene
-    SDL_SetRenderDrawColor(m_Renderer, OVERSHOOT_BG_R, OVERSHOOT_BG_G, OVERSHOOT_BG_B, 255);
-    SDL_RenderClear(m_Renderer);
+    SDL_SetRenderDrawColor(m_Renderer.get(), OVERSHOOT_BG_R, OVERSHOOT_BG_G, OVERSHOOT_BG_B, 255);
+    SDL_RenderClear(m_Renderer.get());
     m_Scene->Draw(m_Renderer);
-    SDL_RenderPresent(m_Renderer);
+    SDL_RenderPresent(m_Renderer.get());
     return SDL_APP_CONTINUE;
 }
