@@ -46,7 +46,7 @@ void ScenePlayer::SetBackgroundTexture(std::shared_ptr<SDL_Texture> bg)
 
 void ScenePlayer::CheatInit(std::shared_ptr<SDL_Renderer> renderer)
 {
-    m_Walking = AssetHelper::LoadTexture(renderer, "images/cow/cow_walk.png");
+    m_Walking = HelperFunctions::LoadTexture(renderer, "images/cow/cow_walk.png");
     walkRight();
 }
 

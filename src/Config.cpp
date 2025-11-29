@@ -33,6 +33,6 @@ void Config::loadFromXML(const std::string& xmlPath, std::shared_ptr<SDL_Rendere
     const char* src = bgElem->Attribute("src");
     if (src)
     {
-        m_BackgroundTexture = AssetHelper::LoadTexture(renderer, src);
+        m_BackgroundTexture = HelperFunctions::LoadTexture(renderer, src);
     }
 }

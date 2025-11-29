@@ -11,10 +11,10 @@ void FunctionalFactory::RegisterFunctional(const std::string& id, Creator creato
     creators[id] = creator;
 }
 
-std::unique_ptr<Functional> FunctionalFactory::Create(const std::string& id, Functional::CreationArgs& args) {
+std::unique_ptr<Functional> FunctionalFactory::Create(const std::string& id, Actor& actor, FunctionalCreationArgs& args) {
     auto it = creators.find(id);
     if (it != creators.end()) {
-        return (it->second)(args);
+        return (it->second)(actor, args);
     }
     return nullptr;
 }

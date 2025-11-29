@@ -6,7 +6,8 @@ BIN_DIR         = bin
 SRC_DIR         = src
 INC_DIR         = inc
 
-SOURCES         = $(wildcard $(SRC_DIR)/*.cpp)
+rwildcard = $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
+SOURCES = $(call rwildcard,$(SRC_DIR)/,*.cpp)
 OBJECTS 		= $(subst $(SRC_DIR)/,$(BIN_DIR)/,$(SOURCES:.cpp=.o))
 
 SDLINC          = -I$(SDL_PATH)/base/include -I$(SDL_PATH)/image/include
@@ -25,11 +26,12 @@ $(TARGET): $(OBJECTS)
 # Compile all the source files
 $(BIN_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@echo Compiling $<
+	@mkdir -p $(dir $@)
 	$(CC) -c $< -o $@ $(CFLAGS)
 
 # DESTROY EVERYTHING
 clean:
-	rm $(BIN_DIR)/*
+	rm -r $(BIN_DIR)/*
 
 # Test run
 test:

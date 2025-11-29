@@ -6,7 +6,7 @@
 #include <SDL3/SDL.h>
 #include <tinyxml2.h>
 
-#include <AssetHelper.h>
+#include <HelperFunctions.h>
 
 /// Config class parses an XML configuration and provides access to resources.
 class Config

@@ -5,7 +5,7 @@
 
 #include <SDL3/SDL.h>
 
-#include <AssetHelper.h>
+#include <HelperFunctions.h>
 #include <Animation.h>
 #include <Background.h>
 #include <Camera.h>
