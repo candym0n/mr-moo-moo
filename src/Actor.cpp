@@ -7,11 +7,11 @@ Actor::Actor(std::string id, int width, int height) :
 {
 }
 
-void Actor::RegisterFunctional(std::string& type, FunctionalCreationArgs arguments)
+void Actor::RegisterFunctional(std::string& type, tinyxml2::XMLElement* elem)
 {
-    auto functional = FunctionalFactory::Instance().Create(type, *this, arguments);
+    auto functional = FunctionalFactory::Instance().Create(type, *this, elem);
     if (functional)
-       m_Functionals.push_back(std::move(functional));
+       m_Functionals[type] = std::move(functional);
 }
 
 void Actor::IncludeAnimation(std::string& id, std::shared_ptr<SDL_Texture> sheet, float frameWidth, float frameHeight, float frameDuration, int start, int end)
@@ -28,10 +28,19 @@ void Actor::SetCurrentAnimation(std::string& id)
         m_CurrentAnimation = it->second;
 }
 
+std::shared_ptr<Functional> Actor::GetFunctional(std::string &type)
+{
+    auto it = m_Functionals.find(type);
+    if (it != m_Functionals.end())
+        return it->second;
+    return nullptr;
+}
+
 void Actor::Update(double deltaTime)
 {
-    for (auto& functional : m_Functionals)
+    for (auto& pair : m_Functionals)
     {
+        auto& functional = pair.second;
         functional->Update(deltaTime);
     }
 

@@ -11,10 +11,10 @@ void FunctionalFactory::RegisterFunctional(const std::string& id, Creator creato
     creators[id] = creator;
 }
 
-std::unique_ptr<Functional> FunctionalFactory::Create(const std::string& id, Actor& actor, FunctionalCreationArgs& args) {
+std::unique_ptr<Functional> FunctionalFactory::Create(const std::string& id, Actor& actor, tinyxml2::XMLElement* elem) {
     auto it = creators.find(id);
     if (it != creators.end()) {
-        return (it->second)(actor, args);
+        return (it->second)(actor, elem);
     }
     return nullptr;
 }

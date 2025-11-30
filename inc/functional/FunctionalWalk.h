@@ -8,21 +8,9 @@
 #include <Animation.h>
 #include <HelperFunctions.h>
 
-struct FunctionalWalkCreationArgs : public FunctionalCreationArgs {
-    // Animation IDs
-    std::string right; // Walk to the right
-    std::string left;  // Walk to the left
-    std::string idle;  // Stand still, facing away from the camera
-};
-
-struct FunctionalWalkRuntimeArgs : public FunctionalRuntimeArgs {
-    float destinationX; // X coordinate to walk to
-    float speed;        // Speed of movement
-};
-
 class FunctionalWalk : public Functional {
 public:
-    FunctionalWalk(Actor& actor, FunctionalCreationArgs& arguments);
+    FunctionalWalk(Actor& actor, tinyxml2::XMLElement* elem);
 
     void Begin(tinyxml2::XMLElement* elem) override; // Called at the start of each duration
     void Update(double deltaTime) override;          // Called every frame in a duration
@@ -51,6 +39,6 @@ private:
     double m_PhaseElapsedTime = 0.0;
 };
 
-REGISTER_FUNCTIONAL("walk", FunctionalWalk, FunctionalWalkCreationArgs);
+REGISTER_FUNCTIONAL("walk", FunctionalWalk);
 
 #endif // FUNTIONAL_WALK_H

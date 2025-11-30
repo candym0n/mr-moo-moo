@@ -18,9 +18,10 @@ class Actor {
 public:
     Actor(std::string id, int width, int height);
 
-    void RegisterFunctional(std::string& type, FunctionalCreationArgs arguments);
+    void RegisterFunctional(std::string& type, tinyxml2::XMLElement* elem);
     void IncludeAnimation(std::string& id, std::shared_ptr<SDL_Texture> sheet, float frameWidth, float frameHeight, float frameDuration, int start, int end);
     void SetCurrentAnimation(std::string& id);
+    std::shared_ptr<Functional> GetFunctional(std::string& type);
 
     void Update(double deltaTime);
     void Draw(std::shared_ptr<SDL_Renderer> renderer, std::shared_ptr<Camera> camera);
@@ -31,12 +32,15 @@ public:
     float GetX() const { return m_X; }
     float GetY() const { return m_Y; }
 
+    float GetWidth() const { return m_Width; }
+    float GetHeight() const { return m_Height; }
+
     std::string GetId();
 private:
     std::string m_Id;
     std::shared_ptr<Animation> m_CurrentAnimation;
     std::map<std::string, std::shared_ptr<Animation>> m_Animations;
-    std::vector<std::unique_ptr<Functional>> m_Functionals;
+    std::map<std::string, std::shared_ptr<Functional>> m_Functionals;
 
     float m_X, m_Y;
     int m_Width, m_Height;

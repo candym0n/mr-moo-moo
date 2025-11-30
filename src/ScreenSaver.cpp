@@ -18,16 +18,13 @@ ScreenSaver::ScreenSaver(HWND hwnd) :
     
     SDL_SetRenderLogicalPresentation(m_Renderer.get(), LOGICAL_WIDTH, LOGICAL_HEIGHT, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 
-    m_Scene = std::make_unique<ScenePlayer>();
-    m_Config = std::make_unique<Config>(CONFIG_PATH, m_Renderer);
+    m_ScenePlayer = std::make_unique<ScenePlayer>();
+    m_Config = std::make_unique<Config>(CONFIG_FILE_PATH, m_Renderer);
 
-    m_Scene->SetBackgroundTexture(m_Config->getBackgroundTexture());
+    m_ScenePlayer->SetBackgroundTexture(m_Config->getBackgroundTexture());
+    m_ScenePlayer->SetScenes(m_Config->getScenes());
 
-    // HA HA
-    m_Scene->CheatInit(m_Renderer);
-}
-
-ScreenSaver::~ScreenSaver() {
+    m_ScenePlayer->SetScene("idle");
 }
 
 int ScreenSaver::CreateWindowAndRenderer(HWND hwnd) {
@@ -58,8 +55,6 @@ int ScreenSaver::CreateWindowAndRenderer(HWND hwnd) {
         m_Window = std::move(tempWindow);
         SDL_DestroyProperties(props);
     }
-
-
 
     if (!m_Window) {
         SDL_Log("SDL_CreateWindow failed: %s", SDL_GetError());
@@ -99,12 +94,12 @@ SDL_AppResult ScreenSaver::UpdateFrame() {
     m_LastTime = currentTime;
 
     // Update the scene
-    m_Scene->Update(deltaTime);
+    m_ScenePlayer->Update(deltaTime);
 
     // Draw the scene
     SDL_SetRenderDrawColor(m_Renderer.get(), OVERSHOOT_BG_R, OVERSHOOT_BG_G, OVERSHOOT_BG_B, 255);
     SDL_RenderClear(m_Renderer.get());
-    m_Scene->Draw(m_Renderer);
+    m_ScenePlayer->Draw(m_Renderer);
     SDL_RenderPresent(m_Renderer.get());
     return SDL_APP_CONTINUE;
 }

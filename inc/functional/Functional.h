@@ -7,19 +7,11 @@
 
 class Actor; // Forward declartion to keep compiler happy
 
-struct FunctionalCreationArgs {
-    virtual ~FunctionalCreationArgs() {};
-};
-
-struct FunctionalRuntimeArgs {
-    virtual ~FunctionalRuntimeArgs() {};
-};
-
 class Functional {
 public:
     Functional(Actor& actor) : m_Actor(actor) {}
 
-    virtual void Begin(tinyxml2::XMLElement* arguments) {};
+    virtual void Begin(tinyxml2::XMLElement* elem) {};
     virtual void Update(double deltaTime) {};
 
     constexpr bool IsPlaying() { return m_Playing; }

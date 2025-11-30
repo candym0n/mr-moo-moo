@@ -11,7 +11,7 @@
 #include <Config.h>
 #include <ScenePlayer.h>
 
-#define CONFIG_PATH "C:/Users/Jayden/AppData/Local/MrMooMoo/config.xml"
+#define CONFIG_FILE_PATH "C:/Users/Jayden/AppData/Local/MrMooMoo/config.xml"
 
 class ScreenSaver {
     using SDLWindowPtr = std::unique_ptr<SDL_Window, void(*)(SDL_Window*)>;
@@ -23,7 +23,7 @@ public:
     ScreenSaver& operator=(const ScreenSaver&) = delete;
 
     explicit ScreenSaver(HWND hwnd);
-    ~ScreenSaver();
+    ~ScreenSaver() = default;
 
     SDL_AppResult HandleEvent(const SDL_Event* event);
     SDL_AppResult UpdateFrame();
@@ -38,7 +38,7 @@ private:
     std::shared_ptr<SDL_Renderer> m_Renderer;
     int m_Width = 0, m_Height = 0;
 
-    std::unique_ptr<ScenePlayer> m_Scene;
+    std::unique_ptr<ScenePlayer> m_ScenePlayer;
     std::unique_ptr<Config> m_Config;
     //SDLRendererPtr m_Renderer;
 

@@ -7,17 +7,17 @@
 #include <map>
 
 #include <Actor.h>
+#include <tinyxml2.h>
 #include "Functional.h"
 
 // Helper registration macro
-#define REGISTER_FUNCTIONAL(id, Type, CreationArgsType) \
+#define REGISTER_FUNCTIONAL(id, Type) \
     namespace { \
         const bool registered_##Type = [] { \
             FunctionalFactory::Instance().RegisterFunctional( \
                 id, \
-                [](Actor& actor, FunctionalCreationArgs& args) { \
-                    CreationArgsType& typedArgs = dynamic_cast<CreationArgsType&>(args); \
-                    return std::make_unique<Type>(actor, typedArgs); \
+                [](Actor& actor, tinyxml2::XMLElement* elem) { \
+                    return std::make_unique<Type>(actor, elem); \
                 }); \
             return true; \
         }(); \
@@ -29,12 +29,12 @@ struct FunctionalCreationArgs;
 
 class FunctionalFactory {
 public:
-    using Creator = std::function<std::unique_ptr<Functional>(Actor& actor, FunctionalCreationArgs& args)>;
+    using Creator = std::function<std::unique_ptr<Functional>(Actor& actor, tinyxml2::XMLElement* elem)>;
 
     static FunctionalFactory& Instance();
 
     void RegisterFunctional(const std::string& id, Creator creator);
-    std::unique_ptr<Functional> Create(const std::string& id, Actor& actor, FunctionalCreationArgs& args);
+    std::unique_ptr<Functional> Create(const std::string& id, Actor& actor, tinyxml2::XMLElement* elem);
 
 private:
     std::map<std::string, Creator> creators;

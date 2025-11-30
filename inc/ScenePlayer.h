@@ -2,22 +2,27 @@
 #define SCENE_PLAYER_H
 
 #include <memory>
+#include <vector>
 
 #include <SDL3/SDL.h>
 
-#include <HelperFunctions.h>
+#include <Actor.h>
 #include <Animation.h>
 #include <Background.h>
 #include <Camera.h>
+#include <HelperFunctions.h>
+#include <Scene.h>
 
 class ScenePlayer {
 public:
     ScenePlayer();
-    ~ScenePlayer();
+    ~ScenePlayer() = default;
 
     void SetBackgroundTexture(std::shared_ptr<SDL_Texture> bg);
 
-    void CheatInit(std::shared_ptr<SDL_Renderer> renderer);
+    void SetScene(std::string id);
+
+    void SetScenes(std::map<std::string, std::shared_ptr<Scene>> scenes);
 
     void Draw(std::shared_ptr<SDL_Renderer> renderer);
     void Update(double deltaTime);
@@ -25,14 +30,9 @@ public:
 private:
     std::shared_ptr<Camera> m_Camera;
     std::unique_ptr<Background> m_Background;
-    
-    // Ignore my cheats for demonstration purposes
-    std::unique_ptr<Animation> m_Cow;
-    std::shared_ptr<SDL_Texture> m_Walking;
 
-    void walkRight();
-    void standStill();
-    void walkLeft();
+    std::map<std::string, std::shared_ptr<Scene>> m_Scenes;
+    std::shared_ptr<Scene> m_Scene;
 };
 
 #endif // SCENE_PLAYER_H
