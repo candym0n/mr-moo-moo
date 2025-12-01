@@ -17,7 +17,12 @@ std::shared_ptr<SDL_Texture> HelperFunctions::LoadTexture(std::shared_ptr<SDL_Re
     if (it != m_ImageCache.end())
         return it->second;
 
-    SDL_Texture* raw = IMG_LoadTexture(renderer.get(), GetAssetPath(path).c_str());
+    if (!renderer)
+        printf("Renderer is null when trying to load texture '%s'\n", path.c_str());
+
+    std::string fullPath = GetAssetPath(path);
+
+    SDL_Texture* raw = IMG_LoadTexture(renderer.get(), fullPath.c_str());
     if (!raw) {
         std::cerr << "Failed to load texture '" << path << "': " << SDL_GetError() << '\n';
         return nullptr;

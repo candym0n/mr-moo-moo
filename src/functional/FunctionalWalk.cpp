@@ -1,4 +1,5 @@
 #include <functional/FunctionalWalk.h>
+#include <iostream>
 
 FunctionalWalk::FunctionalWalk(Actor& actor, tinyxml2::XMLElement* elem) : Functional(actor)
 {   

@@ -20,7 +20,7 @@ public:
 
     void AddBlock(ParallelBlock block);
 
-    bool Ended() const { return m_CurrentBlock == ParallelBlocks.end(); }
+    bool Ended() const { return m_CurrentBlock == ParallelBlocks.end() - 1; }
 
     inline std::string GetId() const { return m_Id; }
     std::vector<std::shared_ptr<Actor>> const GetActorsInvolved();

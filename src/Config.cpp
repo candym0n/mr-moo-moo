@@ -18,16 +18,14 @@ std::map<std::string, std::shared_ptr<Scene>> Config::getScenes() const
 
 void Config::loadFromXML(const std::string& xmlPath, std::shared_ptr<SDL_Renderer> renderer)
 {
-    static tinyxml2::XMLDocument doc;
-
     std::cout << "Loading configuration from: " << xmlPath.c_str() << '\n';
-    if (doc.LoadFile(xmlPath.c_str()) != tinyxml2::XML_SUCCESS)
+    if (m_Doc.LoadFile(xmlPath.c_str()) != tinyxml2::XML_SUCCESS)
     {
         std::cout << "Failed to load XML file: " << xmlPath << '\n';
         return;
     }
 
-    tinyxml2::XMLElement* root = doc.FirstChildElement("ScreenSaver");
+    tinyxml2::XMLElement* root = m_Doc.FirstChildElement("ScreenSaver");
     if (!root) {
         std::cout << "No <ScreenSaver> root element found in XML.\n";
         return;

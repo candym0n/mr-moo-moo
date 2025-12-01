@@ -41,6 +41,8 @@ private:
     void loadFromXML(const std::string& xmlPath, std::shared_ptr<SDL_Renderer> renderer);
     void loadActorConfig(tinyxml2::XMLElement* actorElem, std::shared_ptr<SDL_Renderer> renderer);
     void loadSceneConfig(tinyxml2::XMLElement* sceneElem);
+
+    tinyxml2::XMLDocument m_Doc;
 };
 
 #endif // CONFIG_H

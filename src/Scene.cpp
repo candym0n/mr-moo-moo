@@ -42,9 +42,11 @@ void Scene::NextBlock()
 
     for (const auto& executeFunctional : *m_CurrentBlock)
     {
+        
         std::shared_ptr<Functional> functional = executeFunctional.second;
+        
         tinyxml2::XMLElement* elem = executeFunctional.first;
-
+        
         functional->Begin(elem);
     }
 }
@@ -64,6 +66,8 @@ void Scene::Update(double dt)
 
     if (allEnded)
         NextBlock();
+    
+    
 }
 
 void Scene::UpdateCamera(std::shared_ptr<Camera> camera)
