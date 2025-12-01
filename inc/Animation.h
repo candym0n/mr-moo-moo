@@ -28,6 +28,8 @@ public:
     bool IsPlaying() const { return m_Playing; }
     int GetFrame() const { return m_CurrentFrame; }
 
+    void SetLoop(bool loop);
+
 private:
     std::shared_ptr<SDL_Texture> m_Texture;
     float m_FrameWidth, m_FrameHeight;
@@ -37,6 +39,8 @@ private:
     uint8_t m_StartFrame, m_EndFrame, m_CurrentFrame;
     float m_ElapsedTime;
     bool m_Playing;
+
+    bool m_Loop;
 };
 
 #endif // ANIMATION_H

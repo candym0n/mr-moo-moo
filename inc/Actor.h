@@ -20,7 +20,7 @@ public:
 
     void RegisterFunctional(std::string& type, tinyxml2::XMLElement* elem);
     void IncludeAnimation(std::string& id, std::shared_ptr<SDL_Texture> sheet, float frameWidth, float frameHeight, float frameDuration, int start, int end);
-    void SetCurrentAnimation(std::string& id);
+    void SetCurrentAnimation(std::string& id, bool autoPlay=false, bool loop=true);
     std::shared_ptr<Functional> GetFunctional(std::string& type);
 
     void Update(double deltaTime);
@@ -34,6 +34,11 @@ public:
 
     float GetWidth() const { return m_Width; }
     float GetHeight() const { return m_Height; }
+
+    void PlayAnimation(bool play);
+    void PauseAnimation();
+
+    bool IsPlaying();
 
     std::string GetId();
 private:

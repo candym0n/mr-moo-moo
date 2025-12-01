@@ -48,8 +48,12 @@ void Animation::Update(double dt)
     while (m_ElapsedTime >= m_FrameDuration)
     {
         m_ElapsedTime -= m_FrameDuration;
-        if (m_CurrentFrame >= m_EndFrame)
-            m_CurrentFrame = m_StartFrame;
+        if (m_CurrentFrame >= m_EndFrame) {
+            if (m_Loop)
+                m_CurrentFrame = m_StartFrame;
+            else
+                Pause();
+        }
         else
             ++m_CurrentFrame;
     }
@@ -76,4 +80,9 @@ void Animation::Draw(std::shared_ptr<SDL_Renderer> renderer, std::shared_ptr<Cam
     };
 
     SDL_RenderTexture(renderer.get(), m_Texture.get(), &srcRect, &dstRect);
+}
+
+void Animation::SetLoop(bool loop)
+{
+    m_Loop = loop;
 }

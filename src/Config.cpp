@@ -65,13 +65,17 @@ void Config::loadSceneConfig(tinyxml2::XMLElement *sceneElem)
     if (!sceneElem)
         return;
 
-    // Get scene ID
+    // Get basic scene metadata
     const char* sceneId = sceneElem->Attribute("id");
+    const char* followId = sceneElem->Attribute("follow");
     if (!sceneId)
         return;
 
     // A blank slate to put configuration stuff onto
     auto scene = std::make_shared<Scene>(sceneId);
+
+    if (followId)
+        scene->SetFollowID(followId);
 
     // Load actors involved in the scene
     for (tinyxml2::XMLElement* actorElem = sceneElem->FirstChildElement("Actor"); actorElem != nullptr; actorElem = actorElem->NextSiblingElement("Actor"))
@@ -135,29 +139,31 @@ void Config::loadActorConfig(tinyxml2::XMLElement *actorElem, std::shared_ptr<SD
     // A blank slate to put configuration stuff onto
     auto actor = std::make_shared<Actor>(actorId, actorWidth, actorHeight);
 
-    // Load images for the actor
-    for (tinyxml2::XMLElement* imageElem = actorElem->FirstChildElement("Image"); imageElem != nullptr; imageElem = imageElem->NextSiblingElement("Image"))
+    // Load animations for the actor
+    for (tinyxml2::XMLElement* animElem = actorElem->FirstChildElement("Animation"); animElem != nullptr; animElem = animElem->NextSiblingElement("Animation"))
     {
-        const char* idStr = imageElem->Attribute("id");
-        const char* srcStr = imageElem->Attribute("src");
-        const char* framesStr = imageElem->Attribute("frames");
+        const char* idStr = animElem->Attribute("id");
+        const char* sheetStr = animElem->Attribute("sheet");
+        const char* framesStr = animElem->Attribute("frames");
         
-        if (!idStr || !srcStr)
+        float frameDur = animElem->FloatAttribute("duration") / 1000;
+
+        if (!idStr || !sheetStr)
             continue;
 
-        std::string imageId = idStr;
-        std::string imageSrc = srcStr;
+        std::string animationId = idStr;
+        std::string animationSheet = sheetStr;
         std::stringstream framesSS = std::stringstream(framesStr ? framesStr : "0-0");
 
-        auto texture = HelperFunctions::LoadTexture(renderer, imageSrc);
+        auto texture = HelperFunctions::LoadTexture(renderer, animationSheet);
         if (texture)
         {
             int startFrame, endFrame;
             char dash;
             framesSS >> startFrame >> dash >> endFrame;
-            actor->IncludeAnimation(imageId, texture, actorWidth, actorHeight, 1.0f, 0, 0);
+            actor->IncludeAnimation(animationId, texture, actorWidth, actorHeight, frameDur, startFrame, endFrame);
         } else
-            throw std::runtime_error("Failed to load texture: " + std::string(imageSrc));
+            throw std::runtime_error("Failed to load spritesheet: " + animationSheet + " when loading animation " + animationId + " for actor " + std::string(actorId));
     }
 
     // Load functionals defined for the actor

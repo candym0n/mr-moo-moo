@@ -20,6 +20,10 @@ private:
     std::string m_WalkRight;
     std::string m_WalkLeft;
     std::string m_Idle;
+    std::string m_LeftToStand;
+    std::string m_RightToStand;
+    std::string m_StandToLeft;
+    std::string m_StandToRight;
 
     // Destination coordinate and speed
     float m_DestinationX;
@@ -29,14 +33,15 @@ private:
     enum class WalkingPhase {
         WalkingRight,
         WalkingLeft,
-        StandingStill
+        StandingStill,
+        TurningLTS,
+        TurningSTL,
+        TurningRTS,
+        TurningSTR
     } m_CurrentPhase;
 
     // Transitioning between phases
     void SetPhase(WalkingPhase phase);
-
-    // How long have we been in the current phase?
-    double m_PhaseElapsedTime = 0.0;
 };
 
 REGISTER_FUNCTIONAL("walk", FunctionalWalk);

@@ -11,8 +11,11 @@ class Functional {
 public:
     Functional(Actor& actor) : m_Actor(actor) {}
 
-    virtual void Begin(tinyxml2::XMLElement* elem) {};
-    virtual void Update(double deltaTime) {};
+    virtual void Begin(tinyxml2::XMLElement* elem) {
+        m_Playing = true;
+    }
+    
+    virtual void Update(double deltaTime) {}
 
     constexpr bool IsPlaying() { return m_Playing; }
 protected:

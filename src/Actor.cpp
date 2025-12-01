@@ -21,11 +21,17 @@ void Actor::IncludeAnimation(std::string& id, std::shared_ptr<SDL_Texture> sheet
     m_Animations[id] = animation;
 }
 
-void Actor::SetCurrentAnimation(std::string& id)
+void Actor::SetCurrentAnimation(std::string& id, bool autoPlay, bool loop)
 {
+    if (m_CurrentAnimation)
+        m_CurrentAnimation->Pause();
+
     auto it = m_Animations.find(id);
     if (it != m_Animations.end())
         m_CurrentAnimation = it->second;
+
+    m_CurrentAnimation->SetLoop(loop);
+    m_CurrentAnimation->Play(autoPlay);
 }
 
 std::shared_ptr<Functional> Actor::GetFunctional(std::string &type)
@@ -68,6 +74,21 @@ void Actor::MoveBy(float dx, float dy)
 {
     m_X += dx;
     m_Y += dy;
+}
+
+void Actor::PlayAnimation(bool play)
+{
+    m_CurrentAnimation->Play(play);
+}
+
+void Actor::PauseAnimation()
+{
+    m_CurrentAnimation->Pause();
+}
+
+bool Actor::IsPlaying()
+{
+    return m_CurrentAnimation ? m_CurrentAnimation->IsPlaying() : false;
 }
 
 std::string Actor::GetId()

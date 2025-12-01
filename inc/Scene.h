@@ -17,10 +17,11 @@ public:
     Scene(std::string id);
 
     void AddActor(const std::string& id, std::shared_ptr<Actor> actor, int startX, int startY);
+    void SetFollowID(const std::string& id);
 
     void AddBlock(ParallelBlock block);
 
-    bool Ended() const { return m_CurrentBlock == ParallelBlocks.end() - 1; }
+    bool Ended() const { return BlockEnded() && m_CurrentBlock == ParallelBlocks.end() - 1; }
 
     inline std::string GetId() const { return m_Id; }
     std::vector<std::shared_ptr<Actor>> const GetActorsInvolved();
@@ -35,10 +36,6 @@ public:
 private:
     std::string m_Id;
     std::map<std::string, std::shared_ptr<Actor>> m_ActorsInvolved;
-
-    // Where actors should start out at the start of the scene
-    std::map<std::string, int> m_ActorsStartingX;
-    std::map<std::string, int> m_ActorsStartingY;
 
     // Actor ID of who the camera should follow
     std::string m_CameraFollowId;

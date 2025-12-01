@@ -21,6 +21,11 @@ void Scene::AddActor(const std::string& id, std::shared_ptr<Actor> actor, int st
         m_ActorsStartingY[id] = startY;
 }
 
+void Scene::SetFollowID(const std::string &id)
+{
+    m_CameraFollowId = id;
+}
+
 bool Scene::BlockEnded() const
 {
     for (const auto& executeFunctional : *m_CurrentBlock)
@@ -53,7 +58,11 @@ void Scene::NextBlock()
 
 void Scene::Update(double dt)
 {
-    auto thing = m_ActorsInvolved.begin();
+    for (const auto& pair : m_ActorsInvolved)
+    {
+        std::shared_ptr<Actor> actor = pair.second;
+        actor->Update(dt);
+    }
 
     bool allEnded = true;
 
@@ -66,8 +75,6 @@ void Scene::Update(double dt)
 
     if (allEnded)
         NextBlock();
-    
-    
 }
 
 void Scene::UpdateCamera(std::shared_ptr<Camera> camera)
@@ -80,13 +87,13 @@ void Scene::UpdateCamera(std::shared_ptr<Camera> camera)
     {
         auto actor = it->second;
 
-        if (actor->GetX() + actor->GetWidth() / 2.0f > camera->getX() + 400.0f)
+        if (actor->GetX() + actor->GetWidth() > camera->getX() + 350.0f)
         {
-            camera->setX(actor->GetX() + actor->GetWidth() / 2.0f - 400.0f);
+            camera->setX(actor->GetX() + actor->GetWidth() - 350.0f);
         }
-        else if (actor->GetX() + actor->GetWidth() / 2.0f < camera->getX() + 200.0f)
+        else if (actor->GetX() < camera->getX() + 50.0f)
         {
-            camera->setX(actor->GetX() + actor->GetWidth() / 2.0f - 200.0f);
+            camera->setX(actor->GetX() - 50.0f);
         }
     }
 }

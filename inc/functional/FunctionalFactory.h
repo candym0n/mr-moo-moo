@@ -25,7 +25,6 @@
 
 class Functional;
 class Actor;
-struct FunctionalCreationArgs;
 
 class FunctionalFactory {
 public:
