@@ -13,12 +13,6 @@ void Scene::AddBlock(ParallelBlock block)
 void Scene::AddActor(const std::string& id, std::shared_ptr<Actor> actor, int startX, int startY)
 {
     m_ActorsInvolved[id] = actor;
-    
-    if (startX != INT32_MIN)
-        m_ActorsStartingX[id] = startX;
-    
-    if (startY != INT32_MIN)
-        m_ActorsStartingY[id] = startY;
 }
 
 void Scene::SetFollowID(const std::string &id)
