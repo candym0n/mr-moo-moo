@@ -33,11 +33,15 @@ void Animation::SetTexture(std::shared_ptr<SDL_Texture> texture, float frameWidt
 void Animation::Play(bool play)
 {
     m_Playing = play;
+
+    if (!m_Loop)
+        m_CurrentFrame = m_StartFrame;
 }
 
 void Animation::Pause()
 {
     m_Playing = false;
+    m_ElapsedTime = 0;
 }
 
 void Animation::Update(double dt)
@@ -62,6 +66,7 @@ void Animation::Update(double dt)
 void Animation::Draw(std::shared_ptr<SDL_Renderer> renderer, std::shared_ptr<Camera> camera, int x, int y, int w, int h) const
 {
     if (!m_Texture) return;
+
     int col = m_CurrentFrame % m_Columns;
     int row = m_CurrentFrame / m_Columns;
 

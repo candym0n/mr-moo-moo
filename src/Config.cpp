@@ -11,9 +11,19 @@ std::shared_ptr<SDL_Texture> Config::getBackgroundTexture() const
     return m_BackgroundTexture;
 }
 
-std::map<std::string, std::shared_ptr<Scene>> Config::getScenes() const
+std::vector<std::shared_ptr<Scene>> Config::getScenes() const
 {
     return m_Scenes;
+}
+
+int Config::getIdleSceneIndex() const
+{
+    return m_IdleScene;
+}
+
+std::vector<int> Config::getSceneWeights() const
+{
+    return m_SceneWeights;
 }
 
 void Config::loadFromXML(const std::string& xmlPath, std::shared_ptr<SDL_Renderer> renderer)
@@ -66,13 +76,12 @@ void Config::loadSceneConfig(tinyxml2::XMLElement *sceneElem)
         return;
 
     // Get basic scene metadata
-    const char* sceneId = sceneElem->Attribute("id");
+    bool isIdle = sceneElem->BoolAttribute("idle");
     const char* followId = sceneElem->Attribute("follow");
-    if (!sceneId)
-        return;
+    int sceneWeight = static_cast<int>(sceneElem->Int64Attribute("weight", isIdle ? 0 : 1));
 
     // A blank slate to put configuration stuff onto
-    auto scene = std::make_shared<Scene>(sceneId);
+    auto scene = std::make_shared<Scene>();
 
     if (followId)
         scene->SetFollowID(followId);
@@ -84,14 +93,11 @@ void Config::loadSceneConfig(tinyxml2::XMLElement *sceneElem)
         if (!actorId)
             continue;
 
-        int startX = actorElem->IntAttribute("x", INT32_MIN);
-        int startY = actorElem->IntAttribute("y", INT32_MIN);
-
         auto actorIt = m_Actors.find(actorId);
         if (actorIt == m_Actors.end())
             continue;
 
-        scene->AddActor(actorId, actorIt->second, startX, startY);
+        scene->AddActor(actorId, actorIt->second);
     }
 
     // Load the plot
@@ -121,7 +127,11 @@ void Config::loadSceneConfig(tinyxml2::XMLElement *sceneElem)
         scene->AddBlock({ { funcElem, functional } });
     }
 
-    m_Scenes[sceneId] = scene;
+    if (isIdle)
+        m_IdleScene = m_Scenes.size();
+
+    m_Scenes.push_back(scene);
+    m_SceneWeights.push_back(sceneWeight);
 }
 
 void Config::loadActorConfig(tinyxml2::XMLElement *actorElem, std::shared_ptr<SDL_Renderer> renderer)

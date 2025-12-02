@@ -22,9 +22,7 @@ ScreenSaver::ScreenSaver(HWND hwnd) :
     m_Config = std::make_unique<Config>(CONFIG_FILE_PATH, m_Renderer);
 
     m_ScenePlayer->SetBackgroundTexture(m_Config->getBackgroundTexture());
-    m_ScenePlayer->SetScenes(m_Config->getScenes());
-
-    m_ScenePlayer->SetScene("idle");
+    m_ScenePlayer->SetScenes(m_Config->getScenes(), m_Config->getSceneWeights(), m_Config->getIdleSceneIndex());
 }
 
 int ScreenSaver::CreateWindowAndRenderer(HWND hwnd) {

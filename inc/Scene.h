@@ -14,16 +14,15 @@ public:
     using ExecuteFunctional = std::pair<tinyxml2::XMLElement*, std::shared_ptr<Functional>>;
     using ParallelBlock = std::vector<ExecuteFunctional>;
 
-    Scene(std::string id);
+    Scene() = default;
 
-    void AddActor(const std::string& id, std::shared_ptr<Actor> actor, int startX, int startY);
+    void AddActor(const std::string& id, std::shared_ptr<Actor> actor);
     void SetFollowID(const std::string& id);
 
     void AddBlock(ParallelBlock block);
 
     bool Ended() const { return BlockEnded() && m_CurrentBlock == ParallelBlocks.end() - 1; }
 
-    inline std::string GetId() const { return m_Id; }
     std::vector<std::shared_ptr<Actor>> const GetActorsInvolved();
 
     void Update(double dt);
@@ -34,7 +33,6 @@ public:
     void Begin();
 
 private:
-    std::string m_Id;
     std::map<std::string, std::shared_ptr<Actor>> m_ActorsInvolved;
 
     // Actor ID of who the camera should follow

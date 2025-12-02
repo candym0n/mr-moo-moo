@@ -29,20 +29,29 @@ public:
     std::shared_ptr<SDL_Texture> getBackgroundTexture() const;
 
     // Get all scenes defined in the config
-    std::map<std::string, std::shared_ptr<Scene>> getScenes() const;
+    std::vector<std::shared_ptr<Scene>> getScenes() const;
+
+    // Get the index of the idle scene
+    int getIdleSceneIndex() const;
+
+    // Get the weights of each scene
+    std::vector<int> getSceneWeights() const;
 
 private:
     std::shared_ptr<SDL_Texture> m_BackgroundTexture;
 
     std::map<std::string, std::shared_ptr<Actor>> m_Actors;
-    std::map<std::string, std::shared_ptr<Scene>> m_Scenes;
-
+    
     // XML parsing helper routines.
     void loadFromXML(const std::string& xmlPath, std::shared_ptr<SDL_Renderer> renderer);
     void loadActorConfig(tinyxml2::XMLElement* actorElem, std::shared_ptr<SDL_Renderer> renderer);
     void loadSceneConfig(tinyxml2::XMLElement* sceneElem);
 
     tinyxml2::XMLDocument m_Doc;
+
+    std::vector<std::shared_ptr<Scene>> m_Scenes;
+    std::vector<int> m_SceneWeights;
+    int m_IdleScene = 0;
 };
 
 #endif // CONFIG_H
