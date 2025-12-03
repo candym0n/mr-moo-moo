@@ -20,4 +20,4 @@ private:
 
 REGISTER_FUNCTIONAL("wait", FunctionalWait);
 
-#endif // FUNTIONAL_Wait_H
+#endif // FUNTIONAL_WAIT_H

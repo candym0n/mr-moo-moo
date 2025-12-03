@@ -105,28 +105,62 @@ void Config::loadSceneConfig(tinyxml2::XMLElement *sceneElem)
     if (!plotElem)
         return;
         
-    for (tinyxml2::XMLElement* funcElem = plotElem->FirstChildElement("ExecuteFunctional"); funcElem != nullptr; funcElem = funcElem->NextSiblingElement("ExecuteFunctional"))
+    for (tinyxml2::XMLElement* child = plotElem->FirstChildElement(); child != nullptr; child = child->NextSiblingElement())
     {
-        const char* actorId = funcElem->Attribute("actor");
-        const char* typeStr = funcElem->Attribute("type");
-        if (!actorId || !typeStr)
-            continue;
+        if (std::strcmp(child->Name(), "ExecuteFunctional") == 0)
+        {
+            tinyxml2::XMLElement* funcElem = child;
 
-        std::string funcType = typeStr;
+            const char* actorId = funcElem->Attribute("actor");
+            const char* typeStr = funcElem->Attribute("type");
+            if (!actorId || !typeStr)
+                continue;
 
-        auto actorIt = m_Actors.find(actorId);
-        if (actorIt == m_Actors.end())
-            continue;
+            std::string funcType = typeStr;
 
-        std::shared_ptr<Actor> actor = actorIt->second;
+            auto actorIt = m_Actors.find(actorId);
+            if (actorIt == m_Actors.end())
+                continue;
 
-        auto functional = actor->GetFunctional(funcType);
-        if (!functional)
-            continue;
+            std::shared_ptr<Actor> actor = actorIt->second;
+            auto functional = actor->GetFunctional(funcType);
+            if (!functional)
+                continue;
 
-        scene->AddBlock({ { funcElem, functional } });
+            // Single ExecuteFunctional -> one entry
+            scene->AddBlock({ { funcElem, functional } });
+        }
+        else if (std::strcmp(child->Name(), "ParallelBlock") == 0)
+        {
+            tinyxml2::XMLElement* parallelBlockElem = child;
+            Scene::ParallelBlock block;
+
+            for (tinyxml2::XMLElement* funcElem = parallelBlockElem->FirstChildElement("ExecuteFunctional"); funcElem != nullptr; funcElem = funcElem->NextSiblingElement("ExecuteFunctional"))
+            {
+                const char* actorId = funcElem->Attribute("actor");
+                const char* typeStr = funcElem->Attribute("type");
+                if (!actorId || !typeStr)
+                    continue;
+
+                std::string funcType = typeStr;
+
+                auto actorIt = m_Actors.find(actorId);
+                if (actorIt == m_Actors.end())
+                    continue;
+
+                std::shared_ptr<Actor> actor = actorIt->second;
+
+                auto functional = actor->GetFunctional(funcType);
+                if (!functional)
+                    continue;
+
+                block.push_back({ funcElem, functional });
+            }
+
+            scene->AddBlock(block);
+        }
     }
-
+    
     if (isIdle)
         m_IdleScene = m_Scenes.size();
 
