@@ -16,6 +16,9 @@ public:
     void Begin(tinyxml2::XMLElement* elem) override; // Called at the start of each duration
 private:
     std::string m_Animation; // The animation to animate
+
+    float m_Duration; // Duration to play for
+    float m_Elapsed = 0.0f;
 };
 
 REGISTER_FUNCTIONAL("animate", FunctionalAnimate);

@@ -10,6 +10,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
     srand(time(nullptr));
 
+    HelperFunctions::GenerateAssetDirPath();
+
     ScreenSaver* screenSaver = new ScreenSaver(nullptr);
 
     *appstate = static_cast<void*>(screenSaver);

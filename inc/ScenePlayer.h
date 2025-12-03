@@ -26,6 +26,8 @@ public:
     void Draw(std::shared_ptr<SDL_Renderer> renderer);
     void Update(double deltaTime);
 
+    void SetQueueScene(int sceneIndex);
+
     int GetRandomSceneIndex() const;
 
 private:
@@ -39,6 +41,8 @@ private:
     int m_TotalWeight;    
 
     int m_IdleScene;
+
+    int mutable m_QueueScene = -1;
 };
 
 #endif // SCENE_PLAYER_H

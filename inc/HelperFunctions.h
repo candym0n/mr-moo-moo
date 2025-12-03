@@ -10,6 +10,8 @@
 
 class HelperFunctions {
 public:
+    // Establish the asset directory path
+    static void GenerateAssetDirPath();
 
     // Loads a texture from an asset path (returns a shared pointer for safe ownership)
     static std::shared_ptr<SDL_Texture> LoadTexture(std::shared_ptr<SDL_Renderer> renderer, const std::string& path);
@@ -26,6 +28,8 @@ private:
     
     // Retrieves the full asset path
     static std::string GetAssetPath(const std::string& path);
+
+    static std::string m_AssetDirPath;
 };
 
 #endif // HELPER_FUNCTIONS_H

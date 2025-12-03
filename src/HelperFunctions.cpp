@@ -1,17 +1,34 @@
 #include "HelperFunctions.h"
 #include <iostream>
+#include <SDL3/SDL_filesystem.h>
 
 std::unordered_map<std::string, std::shared_ptr<SDL_Texture>> HelperFunctions::m_ImageCache{};
+std::string HelperFunctions::m_AssetDirPath;
 
 std::string HelperFunctions::AssetDirPath() {
-    return "C:/Users/Jayden/AppData/Local/MrMooMoo/";
+    return m_AssetDirPath;
 }
 
 std::string HelperFunctions::GetAssetPath(const std::string& path) {
     return AssetDirPath() + path;
 }
 
-std::shared_ptr<SDL_Texture> HelperFunctions::LoadTexture(std::shared_ptr<SDL_Renderer> renderer, const std::string& path)
+void HelperFunctions::GenerateAssetDirPath()
+{
+    const char* local = SDL_getenv("LOCALAPPDATA");
+    if (local) {
+        m_AssetDirPath = std::string(local) + "/MrMooMoo/";
+    } else {
+        m_AssetDirPath = "./";
+    }
+
+    char dir[1024];
+    SDL_snprintf(dir, sizeof(dir), "%s", m_AssetDirPath.c_str());
+
+    m_AssetDirPath = std::string(dir) + "/";
+}
+
+std::shared_ptr<SDL_Texture> HelperFunctions::LoadTexture(std::shared_ptr<SDL_Renderer> renderer, const std::string &path)
 {
     auto it = m_ImageCache.find(path);
     if (it != m_ImageCache.end())

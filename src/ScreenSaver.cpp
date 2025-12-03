@@ -1,11 +1,9 @@
 #include <ScreenSaver.h>
 
-
-
 // Not the sky background, only for overshoots
-#define OVERSHOOT_BG_R 123
-#define OVERSHOOT_BG_G 220
-#define OVERSHOOT_BG_B 252
+#define OVERSHOOT_BG_R 0
+#define OVERSHOOT_BG_G 0
+#define OVERSHOOT_BG_B 0
 
 ScreenSaver::ScreenSaver(HWND hwnd) : 
     m_LastTime(SDL_GetPerformanceCounter()),

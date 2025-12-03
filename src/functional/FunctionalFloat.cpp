@@ -41,6 +41,7 @@ void FunctionalFloat::Begin(tinyxml2::XMLElement *elem)
 
     // Parse arguments
     m_Speed = elem->FloatAttribute("speed", 50.0f);
+    const char* floatAnimStr = elem->Attribute("animation", m_Float.c_str()); // Can overwrite default animation
 
     const char* destinationXStr = elem->Attribute("destinationX");
     const char* destiniationYStr = elem->Attribute("destinationY");
@@ -48,5 +49,7 @@ void FunctionalFloat::Begin(tinyxml2::XMLElement *elem)
     m_DestinationX = destinationXStr ? HelperFunctions::ParseNumberOrRandom(destinationXStr) : m_Actor.GetX();
     m_DestinationY = destiniationYStr ? HelperFunctions::ParseNumberOrRandom(destiniationYStr) : m_Actor.GetY();
 
-    m_Actor.SetCurrentAnimation(m_Float, true, true);
+    std::string floatAnim = floatAnimStr ? floatAnimStr : m_Float;
+
+    m_Actor.SetCurrentAnimation(floatAnim, true, true);
 }
