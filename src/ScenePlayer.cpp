@@ -31,17 +31,21 @@ void ScenePlayer::Draw(std::shared_ptr<SDL_Renderer> renderer)
 
 void ScenePlayer::Update(double deltaTime)
 {
-    m_Scene->Update(deltaTime);
-    m_Scene->UpdateCamera(m_Camera);
-
     if (m_Scene->Ended())
     {
-        if (m_Scene != m_Scenes[m_IdleScene]) // We just finished a special scene
+        if (m_Scene != m_Scenes[m_IdleScene]) {// We just finished a special scene
             m_Scene = m_Scenes[m_IdleScene];
+            m_Scene->Begin();
+        }
         else if (rand() > RAND_MAX / 2) // We just finished an idle scene, and 50% chance we continue idle
             m_Scene->Begin();
-        else
+        else {
             m_Scene = m_Scenes[GetRandomSceneIndex()];
+            m_Scene->Begin();
+        }
+    } else {
+        m_Scene->Update(deltaTime);
+        m_Scene->UpdateCamera(m_Camera);
     }
 }
 
