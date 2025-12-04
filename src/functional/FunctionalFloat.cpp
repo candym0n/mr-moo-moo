@@ -41,7 +41,7 @@ void FunctionalFloat::Begin(tinyxml2::XMLElement *elem)
 
     // Parse arguments
     m_Speed = elem->FloatAttribute("speed", 50.0f);
-    const char* floatAnimStr = elem->Attribute("animation", m_Float.c_str()); // Can overwrite default animation
+    const char* floatAnimStr = elem->Attribute("animation"); // Can overwrite default animation
 
     const char* destinationXStr = elem->Attribute("destinationX");
     const char* destiniationYStr = elem->Attribute("destinationY");

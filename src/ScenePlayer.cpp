@@ -40,7 +40,7 @@ void ScenePlayer::Update(double deltaTime)
             m_Scene = m_Scenes[m_IdleScene];
             m_Scene->Begin();
         }
-        else if (rand() < RAND_MAX / 4) // We just finished an idle scene, and some chance we continue idle
+        else if (rand() < RAND_MAX / 8) // We just finished an idle scene, and some chance we continue idle
             m_Scene->Begin();
         else {
             m_Scene = m_Scenes[GetRandomSceneIndex()];
