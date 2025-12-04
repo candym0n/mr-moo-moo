@@ -3,30 +3,35 @@
 Config::Config(const std::string &xmlPath, std::shared_ptr<SDL_Renderer> renderer) :
     m_BackgroundTexture(nullptr)
 {
-    loadFromXML(xmlPath, renderer);
+    LoadFromXML(xmlPath, renderer);
 }
 
-std::shared_ptr<SDL_Texture> Config::getBackgroundTexture() const
+std::shared_ptr<SDL_Texture> Config::GetBackgroundTexture() const
 {
     return m_BackgroundTexture;
 }
 
-std::vector<std::shared_ptr<Scene>> Config::getScenes() const
+std::vector<std::shared_ptr<Scene>> Config::GetScenes() const
 {
     return m_Scenes;
 }
 
-int Config::getIdleSceneIndex() const
+int Config::GetIdleSceneIndex() const
 {
     return m_IdleScene;
 }
 
-std::vector<int> Config::getSceneWeights() const
+std::vector<int> Config::GetSceneWeights() const
 {
     return m_SceneWeights;
 }
 
-void Config::loadFromXML(const std::string& xmlPath, std::shared_ptr<SDL_Renderer> renderer)
+std::vector<char> Config::GetSceneShortcuts() const
+{
+    return m_Shortcuts;
+}
+
+void Config::LoadFromXML(const std::string& xmlPath, std::shared_ptr<SDL_Renderer> renderer)
 {
     std::cout << "Loading configuration from: " << xmlPath.c_str() << '\n';
     if (m_Doc.LoadFile(xmlPath.c_str()) != tinyxml2::XML_SUCCESS)
@@ -58,7 +63,7 @@ void Config::loadFromXML(const std::string& xmlPath, std::shared_ptr<SDL_Rendere
     }
 
     for (tinyxml2::XMLElement* actorElem = actorsElem->FirstChildElement("Actor"); actorElem != nullptr; actorElem = actorElem->NextSiblingElement("Actor"))
-        loadActorConfig(actorElem, renderer);
+        LoadActorConfig(actorElem, renderer);
 
     tinyxml2::XMLElement* scenesElem = root->FirstChildElement("Scenes");
     if (!scenesElem) {
@@ -67,10 +72,10 @@ void Config::loadFromXML(const std::string& xmlPath, std::shared_ptr<SDL_Rendere
     }
     
     for (tinyxml2::XMLElement* sceneElem = scenesElem->FirstChildElement("Scene"); sceneElem != nullptr; sceneElem = sceneElem->NextSiblingElement("Scene"))
-        loadSceneConfig(sceneElem);
+        LoadSceneConfig(sceneElem);
 }
 
-void Config::loadSceneConfig(tinyxml2::XMLElement *sceneElem)
+void Config::LoadSceneConfig(tinyxml2::XMLElement *sceneElem)
 {
     if (!sceneElem)
         return;
@@ -78,7 +83,10 @@ void Config::loadSceneConfig(tinyxml2::XMLElement *sceneElem)
     // Get basic scene metadata
     bool isIdle = sceneElem->BoolAttribute("idle");
     const char* followId = sceneElem->Attribute("follow");
-    int sceneWeight = static_cast<int>(sceneElem->Int64Attribute("weight", isIdle ? 0 : 1));
+    int sceneWeight = sceneElem->IntAttribute("weight", isIdle ? 0 : 1);
+    const char* sceneShortcutStr = sceneElem->Attribute("shortcut");
+
+    char sceneShortcut = sceneShortcutStr ? sceneShortcutStr[0] : '\0';
 
     // A blank slate to put configuration stuff onto
     auto scene = std::make_shared<Scene>();
@@ -166,9 +174,10 @@ void Config::loadSceneConfig(tinyxml2::XMLElement *sceneElem)
 
     m_Scenes.push_back(scene);
     m_SceneWeights.push_back(sceneWeight);
+    m_Shortcuts.push_back(sceneShortcut);
 }
 
-void Config::loadActorConfig(tinyxml2::XMLElement *actorElem, std::shared_ptr<SDL_Renderer> renderer)
+void Config::LoadActorConfig(tinyxml2::XMLElement *actorElem, std::shared_ptr<SDL_Renderer> renderer)
 {
     if (!actorElem)
         return;

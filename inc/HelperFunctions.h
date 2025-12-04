@@ -22,12 +22,14 @@ public:
     // Parses either a number or "random min max" into a float (e.g. "-100", "100", "random -50 50")
     static float ParseNumberOrRandom(const std::string& input);
 
+    // Retrieves the full asset path
+    static std::string GetAssetPath(const std::string& path);
+
 private:
     static std::unordered_map<std::string, std::shared_ptr<SDL_Texture>> m_ImageCache;
     static std::string AssetDirPath();
     
-    // Retrieves the full asset path
-    static std::string GetAssetPath(const std::string& path);
+    
 
     static std::string m_AssetDirPath;
 };

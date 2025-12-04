@@ -15,17 +15,11 @@ std::string HelperFunctions::GetAssetPath(const std::string& path) {
 
 void HelperFunctions::GenerateAssetDirPath()
 {
-    const char* local = SDL_getenv("LOCALAPPDATA");
-    if (local) {
-        m_AssetDirPath = std::string(local) + "/MrMooMoo/";
-    } else {
-        m_AssetDirPath = "./";
-    }
+    const char* local = SDL_GetBasePath(); // CONFIGURABLE: Default asset directory
 
-    char dir[1024];
-    SDL_snprintf(dir, sizeof(dir), "%s", m_AssetDirPath.c_str());
+    m_AssetDirPath = local ? std::string(local) : "./";
 
-    m_AssetDirPath = std::string(dir) + "/";
+    m_AssetDirPath += "/";
 }
 
 std::shared_ptr<SDL_Texture> HelperFunctions::LoadTexture(std::shared_ptr<SDL_Renderer> renderer, const std::string &path)

@@ -11,8 +11,6 @@
 #include <Config.h>
 #include <ScenePlayer.h>
 
-#define CONFIG_FILE_PATH "%LOCALAPPDATA%/MrMooMoo/config.xml"
-
 class ScreenSaver {
     using SDLWindowPtr = std::unique_ptr<SDL_Window, void(*)(SDL_Window*)>;
     using SDLRendererPtr = std::unique_ptr<SDL_Renderer, void(*)(SDL_Renderer*)>;

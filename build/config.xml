@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ScreenSaver>
+    <Background src="images/background.png" />
+    <Actors>
+        <Actor id="mrmoomoo" width="128" height="128">
+            <!-- Animations for walking -->
+            <Animation id="walk_right" sheet="images/cow/cow_walk.png" width="128" height="128" duration="80" frames="4-7" />
+            <Animation id="stand_still" sheet="images/cow/cow_turn.png" width="128" height="128" duration="250" frames="2-2" />
+            <Animation id="walk_left" sheet="images/cow/cow_walk.png" width="128" height="128" duration="80" frames="0-3" />
+
+            <Animation id="turn_left_to_stand" sheet="images/cow/cow_turn.png" width="128" height="128" duration="100" frames="0-2" />
+            <Animation id="turn_stand_to_left" sheet="images/cow/cow_turn.png" width="128" height="128" duration="100" frames="6-8" />
+            <Animation id="turn_right_to_stand" sheet="images/cow/cow_turn.png" width="128" height="128" duration="100" frames="4-6" />
+            <Animation id="turn_stand_to_right" sheet="images/cow/cow_turn.png" width="128" height="128" duration="100" frames="2-4" />
+
+            <!-- Animations for yoga -->
+            <Animation id="yoga_cobra_down" sheet="images/cow/cow_yoga.png" width="128" height="128" duration="500" frames="0-2" />
+            <Animation id="yoga_cobra_up" sheet="images/cow/cow_yoga.png" width="128" height="128" duration="500" frames="2-5" />
+
+            <Animation id="yoga_tree_up" sheet="images/cow/cow_yoga.png" width="128" height="128" duration="200" frames="6-11" />
+
+            <!-- Eating Animation -->
+            <Animation id="eat_right_down" sheet="images/cow/cow_eat.png" width="128" height="128" duration="500" frames="12-15" />
+
+            <!-- Spinning Animation -->
+            <Animation id="left_to_limp" sheet="images/cow/cow_spin.png" width="128" height="128" duration="200" frames="0-4" />
+            <Animation id="limp" sheet="images/cow/cow_spin.png" width="128" height="128" duration="100" frames="4" />
+
+            <!-- Sleeping Animation -->
+            <Animation id="left_to_sleep" sheet="images/cow/cow_sleep.png" width="128" height="128" duration="300" frames="0-4" />
+            <Animation id="sleep_to_left" sheet="images/cow/cow_sleep.png" width="128" height="128" duration="300" frames="5-9" />
+
+            <!-- Basic functional declarations -->
+            <Functional type="teleport" />
+            <Functional type="animate" />
+            <Functional type="wait" />
+            <Functional type="float" animation="limp" />
+
+            <!-- Walk functional -->
+            <Functional 
+                type="walk" 
+                right="walk_right" 
+                idle="stand_still" 
+                left="walk_left" 
+                left_to_stand="turn_left_to_stand" 
+                stand_to_left="turn_stand_to_left"
+                right_to_stand="turn_right_to_stand"
+                stand_to_right="turn_stand_to_right"
+            />
+        </Actor>
+        <Actor id="squirrel" width="52" height="52">
+            <!-- Animations for walking -->
+            <Animation id="stand_still" sheet="images/squirrel/squirrel_walk.png" width="52" height="52" duration="100" frames="2-2" />
+            <Animation id="walk" sheet="images/squirrel/squirrel_walk.png" width="52" height="52" duration="100" frames="0-4" />
+
+            <!-- Functional declarations -->
+            <Functional type="teleport" />
+            <Functional type="animate" />
+            <Functional type="wait" />
+            <Functional type="float" animation="walk" />
+        </Actor>
+        <Actor id="ufo" width="256" height="256">
+            <!-- Animations for floating -->
+            <Animation id="float_ray" sheet="images/misc/ufo_float.png" width="256" height="256" duration="100" frames="0-4" />
+            <Animation id="float" sheet="images/misc/ufo_float.png" width="256" height="256" duration="100" frames="5-9" />
+
+            <!-- Functional declarations -->
+            <Functional type="teleport" />
+            <Functional type="animate" />
+            <Functional type="wait" />
+            <Functional type="float" animation="float" />
+        </Actor>
+        <Actor id="noodles" width="128" height="128">
+            <!-- Animation -->
+            <Animation id="appear" sheet="images/misc/cow_noodles.png" width="128" height="128" duration="100" frames="0-5" />
+            <Animation id="eat" sheet="images/misc/cow_noodles.png" width="128" height="128" duration="100" frames="6-11" />
+            <Animation id="disappear" sheet="images/misc/cow_noodles.png" width="128" height="128" duration="100" frames="11-14" />
+
+            <!-- Functional declarations -->
+            <Functional type="teleport" />
+            <Functional type="animate" />
+            <Functional type="wait" />
+        </Actor>
+    </Actors>
+    <Scenes>
+        <!-- Idle Scene -->
+        <Scene follow="mrmoomoo" idle="true">
+            <Actor id="mrmoomoo" />
+            <Plot>
+                <ExecuteFunctional actor="mrmoomoo" type="teleport" y="150" />
+                <ExecuteFunctional actor="mrmoomoo" type="walk" destinationX="random -400 600" speed="100" />
+            </Plot>
+        </Scene>
+        <!-- Cobra Stretch Scene -->
+        <Scene follow="mrmoomoo" shortcut="c" weight="3">
+            <Actor id="mrmoomoo" />
+            <Plot>
+                <ExecuteFunctional actor="mrmoomoo" type="teleport" y="150" />
+
+                <ExecuteFunctional actor="mrmoomoo" type="animate" animation="yoga_cobra_down" />
+                <ExecuteFunctional actor="mrmoomoo" type="wait" duration="1000" />
+                <ExecuteFunctional actor="mrmoomoo" type="animate" animation="yoga_cobra_up" />
+            </Plot>
+        </Scene>
+        <!-- Tree Stretch Scene -->
+        <Scene follow="mrmoomoo" shortcut="t" weight="3">
+            <Actor id="mrmoomoo" />
+            <Plot>
+                <ExecuteFunctional actor="mrmoomoo" type="teleport" y="150" />
+
+                <ExecuteFunctional actor="mrmoomoo" type="animate" animation="yoga_tree_up" />
+                <ExecuteFunctional actor="mrmoomoo" type="wait" duration="2000" />
+                <ExecuteFunctional actor="mrmoomoo" type="animate" animation="stand_still" />
+            </Plot>
+        </Scene>
+        <!-- Squirrel Chase Scene -->
+         <Scene follow="mrmoomoo" shortcut="s" weight="2">
+            <Actor id="squirrel" />
+            <Actor id="mrmoomoo" />
+            <Plot>
+                <!-- Squirrel is off screen, cow is ground level -->
+                <ExecuteFunctional actor="mrmoomoo" type="teleport" y="150" />
+                <ExecuteFunctional actor="squirrel" type="teleport" x="10000" y="200" />
+                
+                <!-- Cow is facing right at left of screen -->
+                <ExecuteFunctional actor="mrmoomoo" type="walk" destinationX="500" speed="100" />
+                <ExecuteFunctional actor="mrmoomoo" type="walk" destinationX="200" speed="100" />
+                <ExecuteFunctional actor="mrmoomoo" type="animate" animation="turn_stand_to_right" />
+
+                <!-- Squirrel walks to right in front of the cow -->
+                <ExecuteFunctional actor="squirrel" type="teleport" x="550" />
+                <ExecuteFunctional actor="squirrel" type="float" destinationX="300" speed="100" />
+                <ExecuteFunctional actor="squirrel" type="animate" animation="stand_still" />
+                <ExecuteFunctional actor="squirrel" type="wait" duration="1000" />
+
+                <!-- Squirrel passes by -->
+                <ParallelBlock>
+                    <ExecuteFunctional actor="squirrel" type="float" destinationX="200" speed="200" />
+                    <ExecuteFunctional actor="mrmoomoo" type="animate" animation="turn_right_to_stand" />
+                </ParallelBlock>
+                <ParallelBlock>
+                    <ExecuteFunctional actor="squirrel" type="float" destinationX="-100" speed="200" />
+                    <ExecuteFunctional actor="mrmoomoo" type="animate" animation="turn_stand_to_left" />
+                </ParallelBlock>
+
+                <ExecuteFunctional actor="mrmoomoo" type="wait" duration="1000" />
+                    <ExecuteFunctional actor="mrmoomoo" type="animate" animation="turn_left_to_stand" />
+            </Plot>
+        </Scene>
+        <!-- UFO Scene -->
+        <Scene follow="mrmoomoo" shortcut="u" weight="1">
+            <Actor id="ufo" />
+            <Actor id="mrmoomoo" />
+            <Plot>
+                <ExecuteFunctional actor="mrmoomoo" type="teleport" y="150" />
+                <ExecuteFunctional actor="ufo" type="teleport" x="350" y="-150" />
+
+                <ExecuteFunctional actor="mrmoomoo" type="walk" destinationX="400" speed="100" />
+                <ExecuteFunctional actor="ufo" type="float" destinationY="0" />
+
+                <ExecuteFunctional actor="ufo" type="animate" animation="float_ray" loop="true" duration="1" />
+
+                <ExecuteFunctional actor="mrmoomoo" type="animate" animation="still_to_left" />
+                <ExecuteFunctional actor="mrmoomoo" type="animate" animation="left_to_limp" />
+                <ExecuteFunctional actor="mrmoomoo" type="float" destinationY="50" speed="20" />
+
+                <ExecuteFunctional actor="mrmoomoo" type="teleport" y="-1000" />
+                <ExecuteFunctional actor="ufo" type="teleport" x="100"/>
+                <ExecuteFunctional actor="ufo" type="float" destinationY="-150" />
+
+                <ExecuteFunctional actor="ufo" type="wait" duration="1000" />
+
+                <ExecuteFunctional actor="ufo" type="float" destinationY="0" />
+                <ExecuteFunctional actor="ufo" type="animate" animation="float_ray" loop="true" duration="1" />
+                
+                <ExecuteFunctional actor="mrmoomoo" type="teleport" y="50" />
+                <ExecuteFunctional actor="mrmoomoo" type="float" destinationY="150" speed="20" />
+
+                <ExecuteFunctional actor="mrmoomoo" type="animate" animation="stand_still"/>
+                <ExecuteFunctional actor="ufo" type="float" destinationY="-150" />
+            </Plot>
+        </Scene>
+        <!-- Sleeping Scene -->
+        <Scene follow="mrmoomoo" shortcut="n" weight="2">
+            <Actor id="noodles" />
+            <Actor id="mrmoomoo" />
+            <Plot>
+                <ExecuteFunctional actor="mrmoomoo" type="teleport" y="150" />
+
+                <ExecuteFunctional actor="mrmoomoo" type="walk" destinationX="-200" speed="100" />
+                <ExecuteFunctional actor="mrmoomoo" type="animate" animation="left_to_sleep" />
+
+                <ExecuteFunctional actor="noodles" type="teleport" x="-150" y="100" />
+                <ExecuteFunctional actor="noodles" type="animate" animation="appear" />
+                <ExecuteFunctional actor="noodles" type="animate" animation="eat" loop="true" duration="5" />
+                <ExecuteFunctional actor="noodles" type="animate" animation="disappear" />
+
+                <ExecuteFunctional actor="mrmoomoo" type="wait" duration="500" />
+                <ExecuteFunctional actor="mrmoomoo" type="animate" animation="sleep_to_left" />
+            </Plot>
+        </Scene>
+    </Scenes>
+</ScreenSaver>

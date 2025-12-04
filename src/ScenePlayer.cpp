@@ -13,10 +13,12 @@ void ScenePlayer::SetBackgroundTexture(std::shared_ptr<SDL_Texture> bg)
     m_Background->SetTexture(bg);
 }
 
-void ScenePlayer::SetScenes(std::vector<std::shared_ptr<Scene>> scenes, std::vector<int> weights, int idleScene)
+void ScenePlayer::SetScenes(std::vector<std::shared_ptr<Scene>> scenes, std::vector<int> weights, std::vector<char> shortcuts, int idleScene)
 {
     m_SceneWeights = weights;
     m_TotalWeight = std::accumulate(weights.begin(), weights.end(), 0);
+
+    m_Shortcuts = shortcuts;
 
     m_Scenes = scenes;
     m_IdleScene = idleScene;
@@ -55,6 +57,17 @@ void ScenePlayer::SetQueueScene(int sceneIndex)
     m_QueueScene = sceneIndex;
 }
 
+int ScenePlayer::GetSceneFromShortcut(char shortcut) const
+{
+    auto it = std::find(m_Shortcuts.begin(), m_Shortcuts.end(), shortcut);
+    if (it != m_Shortcuts.end()) {
+        int index = std::distance(m_Shortcuts.begin(), it);
+        if (index >= 0 && index < m_Scenes.size())
+            return index;
+    }
+    return -1; // Not found
+}
+
 int ScenePlayer::GetRandomSceneIndex() const
 {
     // Uh oh
@@ -79,4 +92,6 @@ int ScenePlayer::GetRandomSceneIndex() const
         if (r < cumlative)
             return i;
     }
+
+    return m_IdleScene; // Fallback
 }
