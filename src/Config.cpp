@@ -3,20 +3,35 @@
 Config::Config(const std::string &xmlPath, std::shared_ptr<SDL_Renderer> renderer) :
     m_BackgroundTexture(nullptr)
 {
-    loadFromXML(xmlPath, renderer);
+    LoadFromXML(xmlPath, renderer);
 }
 
-std::shared_ptr<SDL_Texture> Config::getBackgroundTexture() const
+std::shared_ptr<SDL_Texture> Config::GetBackgroundTexture() const
 {
     return m_BackgroundTexture;
 }
 
-std::map<std::string, std::shared_ptr<Scene>> Config::getScenes() const
+std::vector<std::shared_ptr<Scene>> Config::GetScenes() const
 {
     return m_Scenes;
 }
 
-void Config::loadFromXML(const std::string& xmlPath, std::shared_ptr<SDL_Renderer> renderer)
+int Config::GetIdleSceneIndex() const
+{
+    return m_IdleScene;
+}
+
+std::vector<int> Config::GetSceneWeights() const
+{
+    return m_SceneWeights;
+}
+
+std::vector<char> Config::GetSceneShortcuts() const
+{
+    return m_Shortcuts;
+}
+
+void Config::LoadFromXML(const std::string& xmlPath, std::shared_ptr<SDL_Renderer> renderer)
 {
     std::cout << "Loading configuration from: " << xmlPath.c_str() << '\n';
     if (m_Doc.LoadFile(xmlPath.c_str()) != tinyxml2::XML_SUCCESS)
@@ -48,7 +63,7 @@ void Config::loadFromXML(const std::string& xmlPath, std::shared_ptr<SDL_Rendere
     }
 
     for (tinyxml2::XMLElement* actorElem = actorsElem->FirstChildElement("Actor"); actorElem != nullptr; actorElem = actorElem->NextSiblingElement("Actor"))
-        loadActorConfig(actorElem, renderer);
+        LoadActorConfig(actorElem, renderer);
 
     tinyxml2::XMLElement* scenesElem = root->FirstChildElement("Scenes");
     if (!scenesElem) {
@@ -57,22 +72,24 @@ void Config::loadFromXML(const std::string& xmlPath, std::shared_ptr<SDL_Rendere
     }
     
     for (tinyxml2::XMLElement* sceneElem = scenesElem->FirstChildElement("Scene"); sceneElem != nullptr; sceneElem = sceneElem->NextSiblingElement("Scene"))
-        loadSceneConfig(sceneElem);
+        LoadSceneConfig(sceneElem);
 }
 
-void Config::loadSceneConfig(tinyxml2::XMLElement *sceneElem)
+void Config::LoadSceneConfig(tinyxml2::XMLElement *sceneElem)
 {
     if (!sceneElem)
         return;
 
     // Get basic scene metadata
-    const char* sceneId = sceneElem->Attribute("id");
+    bool isIdle = sceneElem->BoolAttribute("idle");
     const char* followId = sceneElem->Attribute("follow");
-    if (!sceneId)
-        return;
+    int sceneWeight = sceneElem->IntAttribute("weight", isIdle ? 0 : 1);
+    const char* sceneShortcutStr = sceneElem->Attribute("shortcut");
+
+    char sceneShortcut = sceneShortcutStr ? sceneShortcutStr[0] : '\0';
 
     // A blank slate to put configuration stuff onto
-    auto scene = std::make_shared<Scene>(sceneId);
+    auto scene = std::make_shared<Scene>();
 
     if (followId)
         scene->SetFollowID(followId);
@@ -84,14 +101,11 @@ void Config::loadSceneConfig(tinyxml2::XMLElement *sceneElem)
         if (!actorId)
             continue;
 
-        int startX = actorElem->IntAttribute("x", INT32_MIN);
-        int startY = actorElem->IntAttribute("y", INT32_MIN);
-
         auto actorIt = m_Actors.find(actorId);
         if (actorIt == m_Actors.end())
             continue;
 
-        scene->AddActor(actorId, actorIt->second, startX, startY);
+        scene->AddActor(actorId, actorIt->second);
     }
 
     // Load the plot
@@ -99,32 +113,71 @@ void Config::loadSceneConfig(tinyxml2::XMLElement *sceneElem)
     if (!plotElem)
         return;
         
-    for (tinyxml2::XMLElement* funcElem = plotElem->FirstChildElement("ExecuteFunctional"); funcElem != nullptr; funcElem = funcElem->NextSiblingElement("ExecuteFunctional"))
+    for (tinyxml2::XMLElement* child = plotElem->FirstChildElement(); child != nullptr; child = child->NextSiblingElement())
     {
-        const char* actorId = funcElem->Attribute("actor");
-        const char* typeStr = funcElem->Attribute("type");
-        if (!actorId || !typeStr)
-            continue;
+        if (std::strcmp(child->Name(), "ExecuteFunctional") == 0)
+        {
+            tinyxml2::XMLElement* funcElem = child;
 
-        std::string funcType = typeStr;
+            const char* actorId = funcElem->Attribute("actor");
+            const char* typeStr = funcElem->Attribute("type");
+            if (!actorId || !typeStr)
+                continue;
 
-        auto actorIt = m_Actors.find(actorId);
-        if (actorIt == m_Actors.end())
-            continue;
+            std::string funcType = typeStr;
 
-        std::shared_ptr<Actor> actor = actorIt->second;
+            auto actorIt = m_Actors.find(actorId);
+            if (actorIt == m_Actors.end())
+                continue;
 
-        auto functional = actor->GetFunctional(funcType);
-        if (!functional)
-            continue;
+            std::shared_ptr<Actor> actor = actorIt->second;
+            auto functional = actor->GetFunctional(funcType);
+            if (!functional)
+                continue;
 
-        scene->AddBlock({ { funcElem, functional } });
+            // Single ExecuteFunctional -> one entry
+            scene->AddBlock({ { funcElem, functional } });
+        }
+        else if (std::strcmp(child->Name(), "ParallelBlock") == 0)
+        {
+            tinyxml2::XMLElement* parallelBlockElem = child;
+            Scene::ParallelBlock block;
+
+            for (tinyxml2::XMLElement* funcElem = parallelBlockElem->FirstChildElement("ExecuteFunctional"); funcElem != nullptr; funcElem = funcElem->NextSiblingElement("ExecuteFunctional"))
+            {
+                const char* actorId = funcElem->Attribute("actor");
+                const char* typeStr = funcElem->Attribute("type");
+                if (!actorId || !typeStr)
+                    continue;
+
+                std::string funcType = typeStr;
+
+                auto actorIt = m_Actors.find(actorId);
+                if (actorIt == m_Actors.end())
+                    continue;
+
+                std::shared_ptr<Actor> actor = actorIt->second;
+
+                auto functional = actor->GetFunctional(funcType);
+                if (!functional)
+                    continue;
+
+                block.push_back({ funcElem, functional });
+            }
+
+            scene->AddBlock(block);
+        }
     }
+    
+    if (isIdle)
+        m_IdleScene = m_Scenes.size();
 
-    m_Scenes[sceneId] = scene;
+    m_Scenes.push_back(scene);
+    m_SceneWeights.push_back(sceneWeight);
+    m_Shortcuts.push_back(sceneShortcut);
 }
 
-void Config::loadActorConfig(tinyxml2::XMLElement *actorElem, std::shared_ptr<SDL_Renderer> renderer)
+void Config::LoadActorConfig(tinyxml2::XMLElement *actorElem, std::shared_ptr<SDL_Renderer> renderer)
 {
     if (!actorElem)
         return;

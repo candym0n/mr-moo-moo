@@ -1,17 +1,28 @@
 #include "HelperFunctions.h"
 #include <iostream>
+#include <SDL3/SDL_filesystem.h>
 
 std::unordered_map<std::string, std::shared_ptr<SDL_Texture>> HelperFunctions::m_ImageCache{};
+std::string HelperFunctions::m_AssetDirPath;
 
 std::string HelperFunctions::AssetDirPath() {
-    return "C:/Users/Jayden/AppData/Local/MrMooMoo/";
+    return m_AssetDirPath;
 }
 
 std::string HelperFunctions::GetAssetPath(const std::string& path) {
     return AssetDirPath() + path;
 }
 
-std::shared_ptr<SDL_Texture> HelperFunctions::LoadTexture(std::shared_ptr<SDL_Renderer> renderer, const std::string& path)
+void HelperFunctions::GenerateAssetDirPath()
+{
+    const char* local = SDL_GetBasePath(); // CONFIGURABLE: Default asset directory
+
+    m_AssetDirPath = local ? std::string(local) : "./";
+
+    m_AssetDirPath += "/";
+}
+
+std::shared_ptr<SDL_Texture> HelperFunctions::LoadTexture(std::shared_ptr<SDL_Renderer> renderer, const std::string &path)
 {
     auto it = m_ImageCache.find(path);
     if (it != m_ImageCache.end())

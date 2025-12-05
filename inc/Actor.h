@@ -35,7 +35,7 @@ public:
     float GetWidth() const { return m_Width; }
     float GetHeight() const { return m_Height; }
 
-    void PlayAnimation(bool play);
+    void PlayAnimation(bool play=true);
     void PauseAnimation();
 
     bool IsPlaying();
@@ -47,7 +47,7 @@ private:
     std::map<std::string, std::shared_ptr<Animation>> m_Animations;
     std::map<std::string, std::shared_ptr<Functional>> m_Functionals;
 
-    float m_X, m_Y;
+    float m_X = 0, m_Y = 0;
     int m_Width, m_Height;
 };
 

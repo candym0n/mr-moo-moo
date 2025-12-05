@@ -93,10 +93,10 @@ void FunctionalWalk::Begin(tinyxml2::XMLElement* elem)
     Functional::Begin(elem);
 
     // Parse arguments
-    m_Speed = elem->FloatAttribute("speed", 50.0f);
+    m_Speed = elem->FloatAttribute("speed", 100.0f);
 
-    const char* destinationBuffer = elem->Attribute("destinationX");
-    m_DestinationX = HelperFunctions::ParseNumberOrRandom(destinationBuffer ? destinationBuffer : "random -400 400");
+    const char* destinationStr = elem->Attribute("destinationX");
+    m_DestinationX = HelperFunctions::ParseNumberOrRandom(destinationStr ? destinationStr : "random -400 400");
 
     SetPhase(WalkingPhase::StandingStill);
 }

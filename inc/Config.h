@@ -22,27 +22,32 @@ public:
     Config(const Config&) = delete;
     Config& operator=(const Config&) = delete;
 
-    // Destructor cleans up texture.
     ~Config() = default;
 
-    // Get SDL_Texture for background.
-    std::shared_ptr<SDL_Texture> getBackgroundTexture() const;
+    std::shared_ptr<SDL_Texture> GetBackgroundTexture() const;
 
-    // Get all scenes defined in the config
-    std::map<std::string, std::shared_ptr<Scene>> getScenes() const;
+    std::vector<std::shared_ptr<Scene>> GetScenes() const;
+    int GetIdleSceneIndex() const;
+    std::vector<int> GetSceneWeights() const;
+    std::vector<char> GetSceneShortcuts() const;
 
 private:
     std::shared_ptr<SDL_Texture> m_BackgroundTexture;
 
     std::map<std::string, std::shared_ptr<Actor>> m_Actors;
-    std::map<std::string, std::shared_ptr<Scene>> m_Scenes;
-
+    
     // XML parsing helper routines.
-    void loadFromXML(const std::string& xmlPath, std::shared_ptr<SDL_Renderer> renderer);
-    void loadActorConfig(tinyxml2::XMLElement* actorElem, std::shared_ptr<SDL_Renderer> renderer);
-    void loadSceneConfig(tinyxml2::XMLElement* sceneElem);
+    void LoadFromXML(const std::string& xmlPath, std::shared_ptr<SDL_Renderer> renderer);
+    void LoadActorConfig(tinyxml2::XMLElement* actorElem, std::shared_ptr<SDL_Renderer> renderer);
+    void LoadSceneConfig(tinyxml2::XMLElement* sceneElem);
 
     tinyxml2::XMLDocument m_Doc;
+
+    // Scene information
+    std::vector<std::shared_ptr<Scene>> m_Scenes;
+    std::vector<int> m_SceneWeights;
+    std::vector<char> m_Shortcuts;
+    int m_IdleScene = 0;
 };
 
 #endif // CONFIG_H

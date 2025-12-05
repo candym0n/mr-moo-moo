@@ -1,16 +1,11 @@
 #include <Scene.h>
 
-Scene::Scene(std::string id) : 
-    m_Id(std::move(id))
-{
-}
-
 void Scene::AddBlock(ParallelBlock block)
 {
     ParallelBlocks.push_back(std::move(block));
 }
 
-void Scene::AddActor(const std::string& id, std::shared_ptr<Actor> actor, int startX, int startY)
+void Scene::AddActor(const std::string& id, std::shared_ptr<Actor> actor)
 {
     m_ActorsInvolved[id] = actor;
 }

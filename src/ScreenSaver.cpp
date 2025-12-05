@@ -1,11 +1,9 @@
 #include <ScreenSaver.h>
 
-
-
 // Not the sky background, only for overshoots
-#define OVERSHOOT_BG_R 123
-#define OVERSHOOT_BG_G 220
-#define OVERSHOOT_BG_B 252
+#define OVERSHOOT_BG_R 0
+#define OVERSHOOT_BG_G 0
+#define OVERSHOOT_BG_B 0
 
 ScreenSaver::ScreenSaver(HWND hwnd) : 
     m_LastTime(SDL_GetPerformanceCounter()),
@@ -19,12 +17,15 @@ ScreenSaver::ScreenSaver(HWND hwnd) :
     SDL_SetRenderLogicalPresentation(m_Renderer.get(), LOGICAL_WIDTH, LOGICAL_HEIGHT, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 
     m_ScenePlayer = std::make_unique<ScenePlayer>();
-    m_Config = std::make_unique<Config>(CONFIG_FILE_PATH, m_Renderer);
+    m_Config = std::make_unique<Config>(HelperFunctions::GetAssetPath("config.xml"), m_Renderer);
 
-    m_ScenePlayer->SetBackgroundTexture(m_Config->getBackgroundTexture());
-    m_ScenePlayer->SetScenes(m_Config->getScenes());
-
-    m_ScenePlayer->SetScene("idle");
+    m_ScenePlayer->SetBackgroundTexture(m_Config->GetBackgroundTexture());
+    m_ScenePlayer->SetScenes(
+        m_Config->GetScenes(),
+        m_Config->GetSceneWeights(),
+        m_Config->GetSceneShortcuts(),
+        m_Config->GetIdleSceneIndex()
+    );
 }
 
 int ScreenSaver::CreateWindowAndRenderer(HWND hwnd) {
@@ -76,14 +77,36 @@ int ScreenSaver::CreateWindowAndRenderer(HWND hwnd) {
 
 SDL_AppResult ScreenSaver::HandleEvent(const SDL_Event* event) {
     if (!event) return SDL_APP_CONTINUE;
+
     switch (event->type) {
-        case SDL_EVENT_QUIT:
-        case SDL_EVENT_KEY_DOWN:
-            return SDL_APP_SUCCESS;
-        default:
-            return SDL_APP_CONTINUE;
+    case SDL_EVENT_QUIT:
+        // Ignore normal quit events; only Shift+Escape should quit.
+        return SDL_APP_CONTINUE;
+
+    case SDL_EVENT_KEY_DOWN: {
+        const SDL_KeyboardEvent &ke = event->key;
+
+        // Check for Shift + Escape to quit
+        if ((ke.mod & SDL_KMOD_SHIFT) && ke.key == SDLK_ESCAPE) { // [web:1][web:8][web:19]
+            return SDL_APP_SUCCESS; // [web:6][web:9][web:12][web:15][web:18]
+        }
+
+        // For other keys, check for shortcut
+        SDL_Keycode keycode = ke.key; // key field in SDL3 keyboard event [web:17]
+        
+        int sceneIndex = m_ScenePlayer->GetSceneFromShortcut(static_cast<char>(keycode));
+        if (sceneIndex >= 0) {
+            m_ScenePlayer->SetQueueScene(sceneIndex);
+        }
+
+        return SDL_APP_CONTINUE;
+    }
+
+    default:
+        return SDL_APP_CONTINUE;
     }
 }
+
 
 SDL_AppResult ScreenSaver::UpdateFrame() {
     if (!m_Renderer) return SDL_APP_FAILURE;

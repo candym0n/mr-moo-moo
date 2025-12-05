@@ -3,6 +3,8 @@
 
 #include <memory>
 #include <vector>
+#include <numeric>
+#include <algorithm>
 
 #include <SDL3/SDL.h>
 
@@ -20,19 +22,30 @@ public:
 
     void SetBackgroundTexture(std::shared_ptr<SDL_Texture> bg);
 
-    void SetScene(std::string id);
-
-    void SetScenes(std::map<std::string, std::shared_ptr<Scene>> scenes);
+    void SetScenes(std::vector<std::shared_ptr<Scene>> scenes, std::vector<int> weights, std::vector<char> shortcuts, int idleScene);
 
     void Draw(std::shared_ptr<SDL_Renderer> renderer);
     void Update(double deltaTime);
+
+    void SetQueueScene(int sceneIndex);
+
+    int GetSceneFromShortcut(char shortcut) const;
+    int GetRandomSceneIndex() const;
 
 private:
     std::shared_ptr<Camera> m_Camera;
     std::unique_ptr<Background> m_Background;
 
-    std::map<std::string, std::shared_ptr<Scene>> m_Scenes;
+    std::vector<std::shared_ptr<Scene>> m_Scenes;
     std::shared_ptr<Scene> m_Scene;
+
+    std::vector<int> m_SceneWeights;
+    std::vector<char> m_Shortcuts;
+    int m_TotalWeight;    
+
+    int m_IdleScene;
+
+    int mutable m_QueueScene = -1;
 };
 
 #endif // SCENE_PLAYER_H
