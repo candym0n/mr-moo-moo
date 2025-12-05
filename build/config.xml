@@ -78,6 +78,11 @@
             <Animation id="fly" sheet="images/cow/cow_fly.png" width="128" height="128" duration="200" frames="3-4" />
             <Animation id="cape_off" sheet="images/cow/cow_fly.png" width="128" height="128" duration="200" frames="5-8" />
 
+            <!-- TAS Cow Animation -->
+            <Animation id="tas_suit_on" sheet="images/cow/cow_tas.png" width="128" height="128" duration="200" frames="0-11" />
+            <Animation id="tas_dance" sheet="images/cow/cow_tas.png" width="128" height="128" duration="200" frames="12-13" />
+            <Animation id="tas_end" sheet="images/cow/cow_tas.png" width="128" height="128" duration="200" frames="14-17" />
+
             <!-- Basic functional declarations -->
             <Functional type="teleport" />
             <Functional type="animate" />
@@ -423,6 +428,18 @@
                 <ExecuteFunctional actor="mrmoomoo" type="animate" animation="cape_off" />
                 <ExecuteFunctional actor="mrmoomoo" type="animate" animation="turn_left_to_stand" />
 
+            </Plot>
+        </Scene>
+        <Scene follow="mrmoomoo" shortcut="y" weight="1">
+            <Actor id="mrmoomoo" />
+            <Plot>
+                <ExecuteFunctional actor="mrmoomoo" type="teleport" y="150" />
+
+                <ExecuteFunctional actor="mrmoomoo" type="animate" animation="turn_stand_to_left" />
+                <ExecuteFunctional actor="mrmoomoo" type="animate" animation="tas_suit_on" />
+                <ExecuteFunctional actor="mrmoomoo" type="animate" animation="tas_dance" loop="true" duration="3" />
+                <ExecuteFunctional actor="mrmoomoo" type="animate" animation="tas_end" />
+                <ExecuteFunctional actor="mrmoomoo" type="animate" animation="turn_left_to_stand" />
             </Plot>
         </Scene>
     </Scenes>
