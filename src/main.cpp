@@ -4,7 +4,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 
-#define TARGET_FPS        30
+#define TARGET_FPS        15
 #define TARGET_FRAME_TIME_MS (1000 / TARGET_FPS)
 
 /* Optional: store timing data in appstate, or use static variables */
