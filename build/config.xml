@@ -83,6 +83,16 @@
             <Animation id="tas_dance" sheet="images/cow/cow_tas.png" width="128" height="128" duration="200" frames="12-13" />
             <Animation id="tas_end" sheet="images/cow/cow_tas.png" width="128" height="128" duration="200" frames="14-17" />
 
+            <!-- 拜拜 Animation-->
+            <Animation id="bai_bai_prepare" sheet="images/cow/cow_bai_bai.png" width="128" height="128" duration="100" frames="0-3" />
+            <Animation id="bai_bai_bow" sheet="images/cow/cow_bai_bai.png" width="128" height="128" duration="200" frames="4-7" />
+            <Animation id="bai_bai_up" sheet="images/cow/cow_bai_bai.png" width="128" height="128" duration="200" frames="8-11" />
+
+            <!-- Plane Fly Animation -->
+            <Animation id="plane_fold" sheet="images/cow/cow_plane.png" width="128" height="128" duration="200" frames="0-6" />
+            <Animation id="plane_throw" sheet="images/cow/cow_plane.png" width="128" height="128" duration="200" frames="7-8" />
+            <Animation id="plane_collapse" sheet="images/cow/cow_plane.png" width="128" height="128" duration="200" frames="9-10" />
+
             <!-- Basic functional declarations -->
             <Functional type="teleport" />
             <Functional type="animate" />
@@ -141,6 +151,16 @@
             <Animation id="stop" sheet="images/misc/music_notes.png" width="256" height="128" duration="100" frames="3-4" />
 
             <!-- Functional declarations -->
+            <Functional type="teleport" />
+            <Functional type="animate" />
+            <Functional type="wait" />
+        </Actor>
+        <Actor id="plane" width="128" height="128">
+            <!-- Animation -->
+            <Animation id="fly" sheet="images/misc/plane.png" width="128" height="128" duration="1" frames="0-0" />
+
+            <!-- Functional declarations -->
+            <Functional type="float" animation="fly" />
             <Functional type="teleport" />
             <Functional type="animate" />
             <Functional type="wait" />
@@ -430,7 +450,8 @@
 
             </Plot>
         </Scene>
-        <Scene follow="mrmoomoo" shortcut="y" weight="1">
+        <!-- TAS Cow Scene -->
+        <Scene follow="mrmoomoo" shortcut="y" weight="2">
             <Actor id="mrmoomoo" />
             <Plot>
                 <ExecuteFunctional actor="mrmoomoo" type="teleport" y="150" />
@@ -441,6 +462,56 @@
                 <ExecuteFunctional actor="mrmoomoo" type="animate" animation="tas_end" />
                 <ExecuteFunctional actor="mrmoomoo" type="animate" animation="turn_left_to_stand" />
             </Plot>
+        </Scene>
+        <!-- 拜拜 Scene -->
+        <Scene follow="mrmoomoo" shortcut="w" weight="2">
+            <Actor id="mrmoomoo" />
+            <Plot>
+                <ExecuteFunctional actor="mrmoomoo" type="teleport" y="150" />
+
+                <ExecuteFunctional actor="mrmoomoo" type="animate" animation="turn_stand_to_left" />
+                <ExecuteFunctional actor="mrmoomoo" type="animate" animation="bai_bai_prepare" />
+                <ExecuteFunctional actor="mrmoomoo" type="animate" animation="bai_bai_bow" loop="true" duration="3" />
+                <ExecuteFunctional actor="mrmoomoo" type="animate" animation="bai_bai_up" />
+                <ExecuteFunctional actor="mrmoomoo" type="animate" animation="turn_left_to_stand" />
+            </Plot>
+        </Scene>
+        <!-- Plane Fly Scene -->
+        <Scene follow="mrmoomoo" shortcut="q" weight="2">
+            <Actor id="mrmoomoo" />
+            <Actor id="plane" />
+            <Plot>
+                <ExecuteFunctional actor="mrmoomoo" type="teleport" y="150" />
+                <ExecuteFunctional actor="plane" type="teleport" x="100" y="1000" />
+
+                <ExecuteFunctional actor="mrmoomoo" type="walk" destinationX="-200" speed="100" />
+                <ExecuteFunctional actor="mrmoomoo" type="walk" destinationX="200" speed="100" />
+                <ExecuteFunctional actor="mrmoomoo" type="walk" destinationX="100" speed="100" />
+
+                <ExecuteFunctional actor="mrmoomoo" type="animate" animation="plane_fold" />
+
+                <ExecuteFunctional actor="plane" type="teleport" y="150" />
+
+                <ExecuteFunctional actor="plane" type="animate" animation="fly" />
+
+                <ParallelBlock>
+                    <ExecuteFunctional actor="plane" type="float" destinationX="-300" speed="200" />
+                    <ExecuteFunctional actor="mrmoomoo" type="animate" animation="plane_throw" />
+                </ParallelBlock>
+                
+                <ExecuteFunctional actor="plane" type="teleport" x="400" />
+                <ExecuteFunctional actor="plane" type="float" destinationX="160" speed="200" />
+
+                <ParallelBlock>
+                    <ExecuteFunctional actor="plane" type="float" destinationX="150" speed="200" />
+                    <ExecuteFunctional actor="mrmoomoo" type="animate" animation="plane_collapse" />
+                </ParallelBlock>
+
+                <ExecuteFunctional actor="plane" type="teleport" y="-1000" />
+
+                <ExecuteFunctional actor="mrmoomoo" type="animate" animation="turn_left_to_stand" />
+            </Plot>
+
         </Scene>
     </Scenes>
 </ScreenSaver>
